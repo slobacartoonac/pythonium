@@ -2,7 +2,6 @@ import os
 from threading import Thread
 import time
 import numpy as np
-#import cv2
 import sys
 import grabscreean
 import recorder_sound
@@ -13,15 +12,13 @@ from moviepy.editor import *
 def info(title):
     print title
     print 'module name:', __name__
-    if hasattr(os, 'getppid'):  # only available on Unix
+    if hasattr(os, 'getppid'):  
         print 'parent process:', os.getppid()
     print 'process id:', os.getpid()
 
 def producer(frames,fps,screen,sound):
     shots=200
     time.sleep(3)
-    
-    #info('producer line')
     with open("tmp.bin","wb") as w:
         print "start gather"
         global original
@@ -46,9 +43,9 @@ def producer(frames,fps,screen,sound):
         if sound: t1.join()
     
 def consumer(frames,fps1,screen,sound):
-    #info('consumer line')
+
     original=(screen[0],screen[1])
-    #fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+
     filename="output"
     number=0
     fpath=filename+str(number)+".mp4"
@@ -56,7 +53,7 @@ def consumer(frames,fps1,screen,sound):
         number+=1
         fpath=filename+str(number)+".mp4"
     print fpath
-    out = [];#cv2.VideoWriter("mtmp.avi",fourcc, fps, original)
+    out = [];
     done=0;
     imagesize=original[0]*original[1]*4
     print imagesize
@@ -80,27 +77,14 @@ def consumer(frames,fps1,screen,sound):
         audio_clip = AudioFileClip("atmp.wav")
         clip=clip.set_audio(audio_clip)
     clip.write_videofile(fpath)
-    #os.remove("mtmp.avi")
     if sound: os.remove("atmp.wav")
     print "done "+fpath
 if __name__ == '__main__':
-    #info('main line')
-    #q = Queue()
-    #print "pravim proces"
-    
-    #t2 = Process(target=consumer, args=(q,))
     print "startujem proces"
-    #t1.start()
-    #print "cekam rezultat"
-    #t2.start()
+
     producer(24*120,24,(200,200,0,0),False)
     consumer(24*120,24,(200,200,0,0),False)
-    #print "cekam da zavrsi"
-    
-    
-    
-    #print "zavrsio"
-    #t2.join()
+
 def record(duration,fps,screen,sound):
     frames=int(duration*fps)
     producer(frames,fps,screen,sound)
