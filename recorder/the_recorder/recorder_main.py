@@ -2,7 +2,7 @@ import os
 from threading import Thread
 import time
 import numpy as np
-import cv2
+#import cv2
 import sys
 import grabscreean
 import recorder_sound
@@ -42,13 +42,13 @@ def producer(frames,fps,screen,sound):
             w.write(image_data)
             shots-=1
             #print shots
-        print "done gather ",frames/fps," ",difference
+        print "done gather ",frames/fps," ",difference," "
         if sound: t1.join()
     
-def consumer(frames,fps,screen,sound):
+def consumer(frames,fps1,screen,sound):
     #info('consumer line')
     original=(screen[0],screen[1])
-    fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+    #fourcc = cv2.VideoWriter_fourcc(*'DIVX')
     filename="output"
     number=0
     fpath=filename+str(number)+".mp4"
@@ -56,38 +56,31 @@ def consumer(frames,fps,screen,sound):
         number+=1
         fpath=filename+str(number)+".mp4"
     print fpath
-    out = cv2.VideoWriter("mtmp.avi",fourcc, fps, original)
+    out = [];#cv2.VideoWriter("mtmp.avi",fourcc, fps, original)
     done=0;
     imagesize=original[0]*original[1]*4
     print imagesize
     with open("tmp.bin","rb") as r:
         for i in xrange(frames):
-            
             printscreen_pil = r.read(imagesize)
-            print printscreen_pil
             if not printscreen_pil:
                 print i,"<-tolko"
                 print "kraj obrade"
                 break
             printscreen_numpy =   np.fromstring(printscreen_pil,dtype='uint8')\
             .reshape((original[1],original[0],4))
-            #print printscreen_numpy.shape
-            printscreen_numpy = cv2.cvtColor(printscreen_numpy,cv2.COLOR_BGR2RGB)
-            printscreen_numpy = cv2.flip(printscreen_numpy,0);
-            printscreen_numpy = cv2.cvtColor(printscreen_numpy,cv2.COLOR_BGR2RGB)
-            #print printscreen_numpy.shape
-            out.write(printscreen_numpy)
-            #print "O\t"+str(done)+"\n"
-            #done+=1
-    out.release()
-    #os.remove("tmp.bin")
-    clip = VideoFileClip("mtmp.avi")
+            out.append((printscreen_numpy[::-1,:,:-1])[:,:,::-1]);
+    if(len(out)<2):
+        print "nema slika"
+        return
+    print "output added ",len(out);
+    clip = ImageSequenceClip(out,fps=fps1)
     audio_clip=None
     if sound:
         audio_clip = AudioFileClip("atmp.wav")
         clip=clip.set_audio(audio_clip)
     clip.write_videofile(fpath)
-    os.remove("mtmp.avi")
+    #os.remove("mtmp.avi")
     if sound: os.remove("atmp.wav")
     print "done "+fpath
 if __name__ == '__main__':
@@ -100,8 +93,8 @@ if __name__ == '__main__':
     #t1.start()
     #print "cekam rezultat"
     #t2.start()
-    producer(200,24,(0,0,200,300),False)
-    consumer(200,24,(0,0,200,300),False)
+    producer(24*120,24,(200,200,0,0),False)
+    consumer(24*120,24,(200,200,0,0),False)
     #print "cekam da zavrsi"
     
     

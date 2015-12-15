@@ -45,6 +45,7 @@ class Example(tk.Tk):
         self.floater.attributes("-alpha", 0.0)
         self.attributes("-alpha", 0.0)
         try:
+            print parsegeometry(self.floater.geometry())
             recorder_main.record(int(self.duration.get()), round(self.framerate.get()), parsegeometry(self.floater.geometry()),self.sound.get()=="sound")
         except:
             self.title("RECORDING FAILD");
