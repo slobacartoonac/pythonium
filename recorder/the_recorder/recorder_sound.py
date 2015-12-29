@@ -1,6 +1,9 @@
 import pyaudio
 import wave
-
+#from multiprocessing import Process, Queue
+import time
+from threading import Thread
+import Queue
 CHUNK = 1024
 FORMAT = pyaudio.paInt16
 CHANNELS = 2
@@ -10,9 +13,10 @@ WAVE_OUTPUT_FILENAME = "atmp.wav"
 #
 
 #his line too
-def record(RECORD_SECONDS):
+def record(q):
     p = pyaudio.PyAudio()
-
+    q.put(1)
+    time.sleep(1);
     stream = p.open(format=FORMAT,
                     channels=CHANNELS,
                     rate=RATE,
@@ -22,10 +26,18 @@ def record(RECORD_SECONDS):
     print("* recording")
 
     frames = []
-
-    for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+    pi=1
+    
+    while 1:
         data = stream.read(CHUNK)
         frames.append(data)
+        try:
+            pi=q.get_nowait()
+            if(pi==-1):
+                break;
+        except:
+            pi=pi
+            
 
     print("* done recording")
 

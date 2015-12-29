@@ -2,9 +2,12 @@ import Tkinter as tk
 import ttk
 import recorder_main
 import re
+#from multiprocessing import Process, Queue
 #most of this code is writen by slobacartoonac@hotmail.com
-
+import Queue
 #not this function
+que=Queue.Queue()
+is_recording=False
 def parsegeometry(geometry):
     m = re.match("(\d+)x(\d+)([-+]\d+)([-+]\d+)", geometry)
     if not m:
@@ -29,10 +32,12 @@ class Example(tk.Tk):
         self.mainframe.grid(column=0, row=0, sticky=('N', 'W', 'E', 'S'))
         self.mainframe.columnconfigure(0, weight=1)
         self.mainframe.rowconfigure(0, weight=1)
-        ttk.Button(self.mainframe, text="Record", command=self.recordVideo).grid(column=3, row=4,sticky=('E'))
-        ttk.Label(self.mainframe, text="set recording time \nin seconds[s]").grid(column=3, row=1, sticky=( 'E'))
-        feet_entry = ttk.Entry(self.mainframe, width=7, textvariable=self.duration)
-        feet_entry.grid(column=3, row=2, sticky=('W', 'E'))
+        global dugme
+        self.dugme=ttk.Button(self.mainframe, text="Record", command=self.recordVideo)
+        self.dugme.grid(column=3, row=4,sticky=('E'))
+        #ttk.Label(self.mainframe, text="set recording time \nin seconds[s]").grid(column=3, row=1, sticky=( 'E'))
+        #feet_entry = ttk.Entry(self.mainframe, width=7, textvariable=self.duration)
+        #feet_entry.grid(column=3, row=2, sticky=('W', 'E'))
         ttk.Label(self.mainframe, text="set framerate\n[24,1] fps").grid(column=1, row=1, sticky=( 'E'))
         ttk.Label(self.mainframe, text=" * ").grid(column=2, row=2, sticky=( 'E'))
         feet_entry1 = ttk.LabeledScale(self.mainframe, from_=24, to=1,variable=self.framerate)
@@ -42,15 +47,26 @@ class Example(tk.Tk):
         check.grid(column=1, row=4, sticky=('W', 'E'))
     def recordVideo(self):
         self.title("RECORDING "+str(self.duration.get())+"s "+str(self.framerate.get())+"fps "+self.floater.geometry()+" "+self.sound.get())
-        self.floater.attributes("-alpha", 0.0)
-        self.attributes("-alpha", 0.0)
-        try:
-            print parsegeometry(self.floater.geometry())
-            recorder_main.record(int(self.duration.get()), round(self.framerate.get()), parsegeometry(self.floater.geometry()),self.sound.get()=="sound")
-        except:
-            self.title("RECORDING FAILD");
-        self.attributes("-alpha", 1.0)
-        self.floater.attributes("-alpha", 0.8)
+        
+        #self.attributes("-alpha", 0.0)
+        if 1:
+            global is_recording,dugme
+            if not is_recording:
+                is_recording=True;
+                self.dugme.config(text="Stop");
+                self.floater.attributes("-alpha", 0.0)
+                recorder_main.start(que, round(self.framerate.get()), parsegeometry(self.floater.geometry()),self.sound.get()=="sound")
+                
+            else:
+                #dugme['text']="Record"
+                is_recording=False;
+                que.put(-1)
+                self.dugme.config(text="Start");
+                self.floater.attributes("-alpha", 0.8)
+        #except:
+        #    self.title("RECORDING FAILD");
+        #self.attributes("-alpha", 1.0)
+        #
         return
 
 class FloatingWindow(tk.Toplevel):
