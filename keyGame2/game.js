@@ -240,8 +240,8 @@ if(colide(posn,e))
 )
 
 if(colide(player,goal)){alert("Congratulations you found king!");
-					posn.y=player.y;
-					posn.x=player.x;
+					posn.y=150;
+					posn.x=150;
 }
 //setting player to new proposed position (actually move)
 player.y=posn.y;
