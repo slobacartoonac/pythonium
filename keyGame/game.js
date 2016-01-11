@@ -12,7 +12,6 @@ function createDiv(x,y,image)
 			iDiv.style.position='absolute'
 			document.getElementsByTagName('body')[0].appendChild(iDiv);
 			return iDiv;
-
 }
 //bricks in level
 bricks=[{x:50,y:50},{x:100,y:50},{x:150,y:50},{x:200,y:50},{x:250,y:50},{x:300,y:50},{x:350,y:50},
@@ -33,37 +32,38 @@ function createBrick(x , y)
 {
 	createDiv(x,y,'brick.jpg');
 }
-function startGame() {
-			//adding background
-			var iDiv = document.createElement('div');
-			iDiv.id = 'block';
-			iDiv.className = 'block';
-			iDiv.style.backgroundImage = "url('background.jpg')";
-			iDiv.style.height=374;
-			iDiv.style.width=374; 
-			iDiv.style.marginLeft=12;
-			iDiv.style.marginTop=12;
-			iDiv.style.position='absolute'
-			document.getElementsByTagName('body')[0].appendChild(iDiv);
+function startGame() 
+{
+	//adding background
+	var iDiv = document.createElement('div');
+	iDiv.id = 'block';
+	iDiv.className = 'block';
+	iDiv.style.backgroundImage = "url('background.jpg')";
+	iDiv.style.height=374;
+	iDiv.style.width=374; 
+	iDiv.style.marginLeft=12;
+	iDiv.style.marginTop=12;
+	iDiv.style.position='absolute'
+	document.getElementsByTagName('body')[0].appendChild(iDiv);
 
 
-			//disable scroll
-			document.getElementsByTagName('body')[0].style.overflow='hidden';
-			//creating player
-			document.player={x:100,y:100, sx:0, sy: 0};
-			//adding players sprite
-			document.iDiv=createDiv(document.player.x,document.player.y,'char.png');
-			bricks.forEach(function(e)
-			{	
-				//adding bricks sprites
-				createBrick(e.x,e.y);
-			});
-			//adding key sprite
-			document.gKey=createDiv(key.x,key.y,'key.png');
-			//adding gate sprite
-			document.gGate=createDiv(gate.x,gate.y,'gatec.png');
+	//disable scroll
+	document.getElementsByTagName('body')[0].style.overflow='hidden';
+	//creating player
+	document.player={x:100,y:100, sx:0, sy: 0};
+	//adding players sprite
+	document.iDiv=createDiv(document.player.x,document.player.y,'char.png');
+	bricks.forEach(function(e)
+	{	
+		//adding bricks sprites
+		createBrick(e.x,e.y);
+	});
+	//adding key sprite
+	document.gKey=createDiv(key.x,key.y,'key.png');
+	//adding gate sprite
+	document.gGate=createDiv(gate.x,gate.y,'gatec.png');
 			
-        }
+}
 function colide(a,b)
 {
 //tests if a and b are colliding
@@ -99,70 +99,70 @@ function moveBox(ev)
 //function that runs game cycle
 function update()
 {
-//new proposed position
-var posn={
-x:document.player.x+document.player.sx,
-y:document.player.y+document.player.sy}
-;
+	//new proposed position
+	var posn={
+		x:document.player.x+document.player.sx,
+		y:document.player.y+document.player.sy}
+	;
 
-bricks.forEach(function(e)
+	bricks.forEach(function(e)
+				{
+					if(colide(posn,e))
+					{
+					//if position is not free then new proposition is not to move
+							posn.y=document.player.y;
+							posn.x=document.player.x; 
+					}
+				});
+	//testing gate collision
+	if(colide(posn,gate))
+		{
+			if(!gotKey)
 			{
-				if(colide(posn,e))
-				{
-				//if position is not free then new proposition is not to move
-						posn.y=document.player.y;
-						posn.x=document.player.x; 
-				}
-			});
-//testing gate collision
-if(colide(posn,gate))
+				if(!gate.open){
+				//if gate is closed then you cant move trough
+					posn.y=document.player.y;
+					posn.x=document.player.x;
+					}
+			}
+			else
+			{
+			//you use the key to open the gate
+			gate.open=true;
+			document.gGate.style.backgroundImage="url('gateo.png')";
+			document.gKey.parentNode.removeChild(document.gKey);
+			gotKey=false;
+			}
+		}
+	if(colide(posn,key))
 	{
-				if(!gotKey)
-				{
-					if(!gate.open){
-					//if gate is closed then you cant move trough
-						posn.y=document.player.y;
-						posn.x=document.player.x;
-						}
-				}
-				else
-				{
-				//you use the key to open the gate
-				gate.open=true;
-				document.gGate.style.backgroundImage="url('gateo.png')";
-				document.gKey.parentNode.removeChild(document.gKey);
-				gotKey=false;
-				}
+	//taking key
+		key.x=50;
+		key.y=6;
+		//moveing div
+		document.gKey.style.marginTop=key.y-25;
+		document.gKey.style.marginLeft=key.x-25;
+		gotKey=true;
 	}
-if(colide(posn,key))
-{
-//taking key
-	key.x=50;
-	key.y=6;
-	//moveing div
-	document.gKey.style.marginTop=key.y-25;
-	document.gKey.style.marginLeft=key.x-25;
-	gotKey=true;
-}
-//setting player to new proposed position (actually move)
-document.player.y=posn.y;
-document.player.x=posn.x; 
-//test if player escaped
-if(posn.y>450||posn.y<0||posn.x>450||posn.x<0) {
-	alert("Congratulations you escaped the lamest prison :D \nBut you got cot! :/");
-	//restarting to starting point
-	gate.open=false;
-	document.gGate.style.backgroundImage="url('gatec.png')";
-	document.player={x:100,y:100, sx:0, sy: 0};
-	key.x=300;
-	key.y=100;
-	document.gKey.style.marginTop=key.y-25;
-	document.gKey.style.marginLeft=key.x-25;
-	document.getElementsByTagName('body')[0].appendChild(document.gKey);
-}
-//setting players div to original position
-document.iDiv.style.marginTop=document.player.y-25;
-document.iDiv.style.marginLeft=document.player.x-25;
+	//setting player to new proposed position (actually move)
+	document.player.y=posn.y;
+	document.player.x=posn.x; 
+	//test if player escaped
+	if(posn.y>450||posn.y<0||posn.x>450||posn.x<0) {
+		alert("Congratulations you escaped the lamest prison :D \nBut you got cot! :/");
+		//restarting to starting point
+		gate.open=false;
+		document.gGate.style.backgroundImage="url('gatec.png')";
+		document.player={x:100,y:100, sx:0, sy: 0};
+		key.x=300;
+		key.y=100;
+		document.gKey.style.marginTop=key.y-25;
+		document.gKey.style.marginLeft=key.x-25;
+		document.getElementsByTagName('body')[0].appendChild(document.gKey);
+	}
+	//setting players div to original position
+	document.iDiv.style.marginTop=document.player.y-25;
+	document.iDiv.style.marginLeft=document.player.x-25;
 }
 //when you rise press player stop
 function stop()
