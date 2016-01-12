@@ -3,7 +3,7 @@ function createDiv(x,y,image)
 {
 	var iDiv = document.createElement('div');
 			iDiv.id = 'block';
-			iDiv.className = 'block';
+			iDiv.className = 'noselect';
 			iDiv.style.backgroundImage = "url("+image+")";
 			iDiv.style.height=50;
 			iDiv.style.width=50; 
@@ -38,7 +38,7 @@ function startGame()
 	//adding background
 	var iDiv = document.createElement('div');
 	iDiv.id = 'block';
-	iDiv.className = 'block';
+	iDiv.className = 'noselect';
 	iDiv.style.backgroundImage = "url('background.jpg')";
 	iDiv.style.height=374;
 	iDiv.style.width=374; 
@@ -117,12 +117,14 @@ function update()
 		if(Math.abs(direction.x)>Math.abs(direction.y))
 		{
 		if(direction.x>0){ moveBox({charCode:100});direction.x-=10;}
-		else if ((direction.x<-0)){moveBox({charCode:97});direction.x+=10};
+		else if ((direction.x<-0)){moveBox({charCode:97});direction.x+=10}
+		else direction=null;
 		}
 		else
 		{
 		if(direction.y>0) {moveBox({charCode:115});direction.y-=10;}
-		else if (direction.y<-0){moveBox({charCode:119});direction.y+=10;};
+		else if (direction.y<-0){moveBox({charCode:119});direction.y+=10;}
+		else direction=null;
 		}
 	
 	}
