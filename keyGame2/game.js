@@ -16,7 +16,7 @@ function createDiv(x,y,image)
 {
 	var iDiv = document.createElement('div');
 			iDiv.id = 'block';
-			iDiv.className = 'block';
+			iDiv.className = 'noselect';
 			iDiv.style.backgroundImage = "url("+image+")";
 			iDiv.style.height=50;
 			iDiv.style.width=50; 
@@ -39,7 +39,7 @@ player=null;
 goal=null;
 
 infobar=[]
-
+direction=null;
 function createBrick(x , y)
 {
 	createDiv(x,y,'brick.jpg');
@@ -48,7 +48,7 @@ function startGame() {
 			//adding background
 			var iDiv = document.createElement('div');
 			iDiv.id = 'block';
-			iDiv.className = 'block';
+			iDiv.className = 'noselect';
 			iDiv.style.backgroundImage = "url('background.jpg')";
 			iDiv.style.height=window.innerHeight;
 			iDiv.style.width=window.innerWidth;; 
@@ -56,6 +56,7 @@ function startGame() {
 			iDiv.style.marginTop=0;
 			iDiv.style.position='absolute'
 			document.getElementsByTagName('body')[0].appendChild(iDiv);
+			document.getElementsByTagName('body')[0].onclick=clickControl;
 
 			infobar=[createDiv(50,6,'keyr.png'),
 			createDiv(100,6,'keyb.png'),
@@ -134,6 +135,16 @@ if(Math.abs(a.x-b.x)<50)
 	}
 return false;
 }
+
+function clickControl(e)
+{
+if(direction) {direction=null;stop(); return;}
+direction={x:Math.round((Math.round(e.x/50)*50-document.player.x)/10)*10,y:Math.round((Math.round(e.y/50)*50-document.player.y)/10)*10};
+
+
+
+}
+
 //function for moveing player
 function moveBox(ev)
 {
@@ -167,6 +178,24 @@ infobar[2].innerHTML=player.kg;
 //function that runs game cycle
 function update()
 {
+
+
+if(direction){
+	stop();
+		if(Math.abs(direction.x)>Math.abs(direction.y))
+		{
+		if(direction.x>0){ moveBox({charCode:100});direction.x-=10;}
+		else if ((direction.x<-0)){moveBox({charCode:97});direction.x+=10}
+		else direction=null;
+		}
+		else
+		{
+		if(direction.y>0) {moveBox({charCode:115});direction.y-=10;}
+		else if (direction.y<-0){moveBox({charCode:119});direction.y+=10;}
+		else direction=null;
+		}
+	
+	}
 //new proposed position
 var posn={
 x:player.x+player.sx,
