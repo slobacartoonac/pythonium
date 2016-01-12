@@ -139,7 +139,7 @@ return false;
 function clickControl(e)
 {
 if(direction) {direction=null;stop(); return;}
-direction={x:Math.round((Math.round(e.x/50)*50-document.player.x)/10)*10,y:Math.round((Math.round(e.y/50)*50-document.player.y)/10)*10};
+direction={x:Math.round((Math.round(e.x/50)*50-player.x)/10)*10,y:Math.round((Math.round(e.y/50)*50-player.y)/10)*10};
 
 
 
