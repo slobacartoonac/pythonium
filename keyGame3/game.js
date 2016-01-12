@@ -68,6 +68,8 @@ function startGame() {
 			infobar=[createDiv(50,6,'keyr.png'),
 			createDiv(100,6,'keyb.png'),
 			createDiv(150,6,'keyg.png')];
+			infobar.forEach(function(e){e.style.position='fixed';
+			e.style.zIndex= 1;});
 			//disable scroll
 			//document.getElementsByTagName('body')[0].style.overflow='hidden';
 			//creating player
