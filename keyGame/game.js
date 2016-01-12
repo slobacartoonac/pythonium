@@ -28,6 +28,7 @@ key={x:300,y:100};
 gate={x:150,y:350,open:false};
 //it gets true when player finds key
 gotKey=false;
+direction=null;
 function createBrick(x , y)
 {
 	createDiv(x,y,'brick.jpg');
@@ -45,6 +46,7 @@ function startGame()
 	iDiv.style.marginTop=12;
 	iDiv.style.position='absolute'
 	document.getElementsByTagName('body')[0].appendChild(iDiv);
+	document.getElementsByTagName('body')[0].onclick=clickControl;
 
 
 	//disable scroll
@@ -76,6 +78,17 @@ if(Math.abs(a.x-b.x)<50)
 	}
 return false;
 }
+
+function clickControl(e)
+{
+if(direction) {direction=null;stop(); return;}
+direction={x:Math.round((Math.round(e.x/50)*50-document.player.x)/10)*10,y:Math.round((Math.round(e.y/50)*50-document.player.y)/10)*10};
+
+
+
+}
+
+
 //function for moveing player
 function moveBox(ev)
 {
@@ -99,6 +112,20 @@ function moveBox(ev)
 //function that runs game cycle
 function update()
 {
+	if(direction){
+	stop();
+		if(Math.abs(direction.x)>Math.abs(direction.y))
+		{
+		if(direction.x>0){ moveBox({charCode:100});direction.x-=10;}
+		else if ((direction.x<-0)){moveBox({charCode:97});direction.x+=10};
+		}
+		else
+		{
+		if(direction.y>0) {moveBox({charCode:115});direction.y-=10;}
+		else if (direction.y<-0){moveBox({charCode:119});direction.y+=10;};
+		}
+	
+	}
 	//new proposed position
 	var posn={
 		x:document.player.x+document.player.sx,
