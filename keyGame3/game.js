@@ -150,7 +150,7 @@ return false;
 function clickControl(e)
 {
 if(direction) {direction=null;stop(); return;}
-direction={x:Math.round((Math.round(e.x/50)*50-player.x)/10)*10,y:Math.round((Math.round(e.y/50)*50-player.y)/10)*10};
+direction={x:Math.round((Math.round((scrollX+e.x)/50-0.5)*50-player.x)/10)*10,y:Math.round((Math.round((scrollY+e.y)/50-0.5)*50-player.y)/10)*10};
 
 
 
