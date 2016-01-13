@@ -60,7 +60,7 @@ while running:
                 file.close()
                 with open('level.html', 'w') as outfile:
                     outfile.write('<html><head><title>Pythonium Test</title></head><body>  <a href="http://slobacartoonac.github.io/pythonium/keyGameSandBox/index.html#');
-                    json.dump(to_draw, outfile)
+                    json.dump(to_draw, outfile,separators=(',',':'))
                     outfile.write('">Your Level</a></br></body></html>');
             if event.key == pygame.K_BACKSPACE:
                 ii=0
