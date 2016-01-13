@@ -2,7 +2,7 @@
 //0:empty,1:brick,2:player,3:keyr,4:gater,
 //kljucevi 3,5,7,
 //vrata 4,6,8
-map=JSON.parse(window.location.hash.toString().replace('#',''));
+map=JSON.parse(window.location.hash.toString().replace('#','').replace('%2B','[').replace('%2D',']').replace('%2C',','));
 function createDiv(x,y,image)
 {
 	var iDiv = document.createElement('div');
