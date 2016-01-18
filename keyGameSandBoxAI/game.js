@@ -364,7 +364,7 @@ enemies.forEach(function(e)
 
 
 if(colide(player,goal)){alert("Congratulations you found king!");
-					window.location="https://http://slobacartoonac.github.io/pythonium/"
+					window.location="https://slobacartoonac.github.io/pythonium/"
 }
 //setting player to new proposed position (actually move)
 player.y=posn.y;
