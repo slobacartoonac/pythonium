@@ -53,10 +53,16 @@ function startGame() {
 			document.getElementsByTagName('body')[0].onclick=clickControl;
 
 			infobar=[createDiv(50,6,'keyr.png'),
-			createDiv(100,6,'keyb.png'),
-			createDiv(150,6,'keyg.png')];
-			infobar.forEach(function(e){e.style.position='fixed';
-			e.style.zIndex= 1;});
+			createDiv(105,6,'keyb.png'),
+			createDiv(160,6,'keyg.png')];
+			infobar.forEach(function(e){
+				e.style.color='orange';
+				e.style.position='fixed';
+				e.style.fontSize='xx-large'
+				e.style.fontFamily= 'monospace';
+				e.style.backgroundColor="black";
+				e.style.zIndex= 1;
+				});
 			//disable scroll
 			//document.getElementsByTagName('body')[0].style.overflow='hidden';
 			//creating player
@@ -137,9 +143,6 @@ function clickControl(e)
 {
 if(direction) {direction=null;stop(); return;}
 direction={x:Math.round((Math.round((e.pageX)/50-0.5)*50-player.x)/10)*10,y:Math.round((Math.round((e.pageY)/50-0.5)*50-player.y)/10)*10};
-
-
-
 }
 //function for moveing player
 function moveBox(ev)
