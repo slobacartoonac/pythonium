@@ -251,7 +251,7 @@ enemies.forEach(
 		}
 		if(raz.x==0&&raz.y==0)
 		{
-			if(Math.floor(Math.random()*40)<1)
+			if(Math.floor(Math.random()*25)<1)
 			{
 				var av=[];
 				var way=false;
