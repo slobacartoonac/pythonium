@@ -13,14 +13,46 @@ to_draw=[[0 for x in range(gridsize)] for x in range(gridsize)]
 current_color = 1
 draw_start = False
 
-##GRAMMATA##
+
 font = pygame.font.Font(None, 36)
 def show_text(msg,color,x,y):
-    text = font.render(msg,True,color)
+    myfont = pygame.font.SysFont("monospace", 20)
+    text = myfont.render(msg, 1, color)
     textpos = (x,y)
     window.blit(text,textpos)
-############
 
+def game_save():
+    file = open('level.txt', 'w')
+    for row in to_draw:
+        file.write("[,")
+        for el in row:
+            file.write(str(int(el))+",")
+        file.write("],\n")
+    file.close()
+    with open('level.html', 'w') as outfile:
+        outfile.write('<html><head><title>Pythonium Test</title></head><body>  <a href="https://slobacartoonac.github.io/pythonium/keyGameSandBoxAI/index.html#');
+        jsencode=json.dumps(to_draw,separators=(',',':'))
+        outfile.write(jsencode.replace('[','a').replace(']','b').replace(',','c'))
+        outfile.write('">Your Level</a></br></body></html>');
+def game_load():
+    ii=0
+    jj=0
+    with open('level.txt', 'r') as myfile:
+        data=myfile.read().replace('\n', '')
+        tokens=data.split(",");
+        for tok in tokens:
+            if tok==']':
+                jj+=1;
+            elif tok=='[':
+                ii=0;
+            elif tok=='':
+                ii=ii;
+            else:
+                try:
+                    to_draw[jj][ii]=int(tok)
+                except:
+                    ii=ii
+                ii+=1;
 
 running = True
 while running:
@@ -41,8 +73,17 @@ while running:
                 else:
                     to_draw[int((pos[1]-50)/20)][int((pos[0]-50)/20)]=current_color;
             else:
-                current_color%=11
-                current_color+=1
+                if pos[1] in xrange(7,33): #(22+25*current_color,7),(24, 2)
+                    new_color=int((pos[0]-22)/25)
+                    if new_color in xrange(1,12):
+                        current_color=new_color
+                elif pos[1] in xrange(60+20*gridsize,85+20*gridsize):
+                    # 60+180 260+80
+                    if pos[0] in xrange(60,240):
+                        game_save()
+                    elif pos[0] in xrange(260,340):
+                        game_load()
+                    
             
 
 
@@ -56,37 +97,11 @@ while running:
             
             iy=50
             if event.key == pygame.K_RETURN:
-                file = open('level.txt', 'w')
-                for row in to_draw:
-                    file.write("[,")
-                    for el in row:
-                        file.write(str(int(el))+",")
-                    file.write("],\n")
-                file.close()
-                with open('level.html', 'w') as outfile:
-                    outfile.write('<html><head><title>Pythonium Test</title></head><body>  <a href="https://slobacartoonac.github.io/pythonium/keyGameSandBoxAI/index.html#');
-                    jsencode=json.dumps(to_draw,separators=(',',':'))
-                    outfile.write(jsencode.replace('[','a').replace(']','b').replace(',','c'))
-                    outfile.write('">Your Level</a></br></body></html>');
+                game_save()
+                
             if event.key == pygame.K_BACKSPACE:
-                ii=0
-                jj=0
-                with open('level.txt', 'r') as myfile:
-                    data=myfile.read().replace('\n', '')
-                    tokens=data.split(",");
-                    for tok in tokens:
-                        if tok==']':
-                            jj+=1;
-                        elif tok=='[':
-                            ii=0;
-                        elif tok=='':
-                            ii=ii;
-                        else:
-                            try:
-                                to_draw[jj][ii]=int(tok)
-                            except:
-                                ii=ii
-                            ii+=1;
+                game_load()
+                
                             
                     
     window.fill(pygame.Color('gray'))
@@ -157,10 +172,35 @@ while running:
     pygame.draw.rect(window,pygame.Color('black'),pygame.Rect((47,50+20*gridsize),(20*gridsize+5, 2)))
 
 
-    show_text("x:",pygame.Color('red'), 300,0)
-    show_text(str(int((mouse_x-50)/20)),pygame.Color('red'),350,0)
-    show_text("y:",pygame.Color('red'),450,0)
-    show_text(str(int((mouse_y-50)/20)),pygame.Color('red'),500,0)
+    show_text("x: "+str(int((mouse_x-50)/20))+"  y: "+str(int((mouse_y-50)/20)),pygame.Color('red'), 400,0)
+    pygame.draw.rect(window,pygame.Color('black'),pygame.Rect((50,60+20*gridsize),(180, 25)))
+    pygame.draw.rect(window,pygame.Color('black'),pygame.Rect((250,60+20*gridsize),(80, 25)))
+    show_text("save/export",pygame.Color('red'), 60,60+20*gridsize)
+    show_text("load",pygame.Color('red'), 260,60+20*gridsize)
+    
+    if current_color==1:
+        show_text("Brick",pygame.Color('red'),400,20)
+    elif current_color==2:
+        show_text("Player-start",pygame.Color('red'),400,20)
+    elif current_color==3:
+        show_text("red key",pygame.Color('red'),400,20)
+    elif current_color==4:
+        show_text("red door",pygame.Color('red'),400,20)
+    elif current_color==5:
+        show_text("blue key",pygame.Color('red'),400,20)
+    elif current_color==6:
+        show_text("blue door",pygame.Color('red'),400,20)
+    elif current_color==7:
+        show_text("green key",pygame.Color('red'),400,20)
+    elif current_color==8:
+        show_text("green door",pygame.Color('red'),400,20)
+    elif current_color==9:
+        show_text("King-goal",pygame.Color('red'),400,20)
+    elif current_color==10:
+        show_text("Shark-enemy",pygame.Color('red'),400,20)
+    elif current_color==11:
+        show_text("Brick",pygame.Color('red'),400,20)
+
 
     pygame.display.update()
     clock.tick(fps)
