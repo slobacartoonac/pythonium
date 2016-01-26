@@ -17,6 +17,7 @@ function createDiv(x,y,image)
 			iDiv.style.marginLeft=x;
 			iDiv.style.marginTop=y;
 			iDiv.style.position='absolute'
+			iDiv.style.zIndex= y;
 			document.getElementsByTagName('body')[0].appendChild(iDiv);
 			return iDiv;
 
@@ -37,9 +38,20 @@ goal=null;
 
 infobar=[];
 direction=null;
-function createBrick(x , y)
+function createBrick(x , y,image)
 {
-	createDiv(x,y,'brick.jpg');
+		var iDiv = document.createElement('div');
+			iDiv.id = 'block';
+			iDiv.className = 'walls';
+			iDiv.style.backgroundImage = "url("+image+")";
+			iDiv.style.height=75;
+			iDiv.style.width=50; 
+			iDiv.style.marginLeft=x;
+			iDiv.style.marginTop=y-12;
+			iDiv.style.position='absolute'
+			iDiv.style.zIndex= y;
+			document.getElementsByTagName('body')[0].appendChild(iDiv);
+			return iDiv;
 }
 function startGame() {
 			//adding background
@@ -61,10 +73,10 @@ function startGame() {
 			infobar.forEach(function(e){
 				e.style.color='orange';
 				e.style.position='fixed';
-				e.style.fontSize='xx-large'
+				e.style.fontSize='x-large'
 				e.style.fontFamily= 'monospace';
 				e.style.backgroundColor="black";
-				e.style.zIndex= 1;
+				e.style.zIndex= 5000;
 				});
 			//disable scroll
 			//document.getElementsByTagName('body')[0].style.overflow='hidden';
@@ -81,7 +93,7 @@ function startGame() {
 				{
 					if(ee==1)
 					{
-					bricks.push({x:ix,y:iy,div: createBrick(ix,iy)});
+					bricks.push({x:ix,y:iy,div: createBrick(ix,iy,'./wall/completeg_y.png')});
 					}
 					if(ee==2)
 					{
@@ -94,7 +106,7 @@ function startGame() {
 					}
 					if(ee==4)
 					{
-					gates.push({x:ix,y:iy,t:1,div:createDiv(ix,iy,'gatecr.png')});
+					gates.push({x:ix,y:iy,t:1,div:createBrick(ix,iy,'./wall/completeg_r.png')});
 					}
 					if(ee==5)
 					{
@@ -102,7 +114,7 @@ function startGame() {
 					}
 					if(ee==6)
 					{
-					gates.push({x:ix,y:iy,t:2,div:createDiv(ix,iy,'gatecb.png')});
+					gates.push({x:ix,y:iy,t:2,div:createBrick(ix,iy,'./wall/completeg_b.png')});
 					}
 					if(ee==7)
 					{
@@ -110,7 +122,7 @@ function startGame() {
 					}
 					if(ee==8)
 					{
-					gates.push({x:ix,y:iy,t:3,div:createDiv(ix,iy,'gatecg.png')});
+					gates.push({x:ix,y:iy,t:3,div:createBrick(ix,iy,'./wall/completeg_g.png')});
 					}
 					if(ee==9)
 					{
@@ -175,9 +187,9 @@ function moveBox(ev)
 function updateInfo()
 {
 
-infobar[0].innerHTML=player.kr;
-infobar[1].innerHTML=player.kb;
-infobar[2].innerHTML=player.kg;
+infobar[0].innerHTML='</br>'+player.kr;
+infobar[1].innerHTML='</br>'+player.kb;
+infobar[2].innerHTML='</br>'+player.kg;
 }
 
 function testPath(posn)
@@ -248,6 +260,7 @@ enemies.forEach(
 			if(raz.y<0) e.y-=5;
 			else e.y+=5;
 			e.div.style.marginTop=e.y;
+			e.div.style.zIndex=e.y;
 		}
 		if(raz.x==0&&raz.y==0)
 		{
@@ -308,8 +321,14 @@ gates.forEach(function(e)
 				{
 				//you use the key to open the gate
 				
-				e.div.style.backgroundImage="url('gateo.png')";
-				//e.div.parentNode.removeChild(e.div);
+				
+				//e.div.style.marginTop= e.y+12;
+				
+				e.div.style.height= 50;
+				setTimeout(function() { e.div.style.zIndex=5000;
+										e.div.style.backgroundImage="url('wall/completeb.png')";
+										}, 500);
+				//e.div.parentNode.removeChild(e.div);SS
 				//gotKey=false;
 				switch(e.t)
 				{
@@ -387,6 +406,7 @@ player.x=posn.x;
 //setting players div to original position
 player.div.style.marginTop=player.y;
 player.div.style.marginLeft=player.x;
+player.div.style.zIndex= player.y;
 }
 //when you rise press player stop
 function stop()
