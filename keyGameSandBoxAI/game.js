@@ -49,7 +49,7 @@ function createBrick(x , y,image)
 			iDiv.style.marginLeft=x;
 			iDiv.style.marginTop=y-12;
 			iDiv.style.position='absolute'
-			iDiv.style.zIndex= y;
+			iDiv.style.zIndex= y+13;
 			document.getElementsByTagName('body')[0].appendChild(iDiv);
 			return iDiv;
 }
@@ -106,7 +106,7 @@ function startGame() {
 					}
 					if(ee==4)
 					{
-					gates.push({x:ix,y:iy,t:1,div:createBrick(ix,iy,'./wall/completeg_r.png')});
+					gates.push({x:ix,y:iy,t:1,div:createBrick(ix,iy,'./wall/completeg_r1.png')});
 					}
 					if(ee==5)
 					{
@@ -114,7 +114,7 @@ function startGame() {
 					}
 					if(ee==6)
 					{
-					gates.push({x:ix,y:iy,t:2,div:createBrick(ix,iy,'./wall/completeg_b.png')});
+					gates.push({x:ix,y:iy,t:2,div:createBrick(ix,iy,'./wall/completeg_b1.png')});
 					}
 					if(ee==7)
 					{
@@ -122,7 +122,7 @@ function startGame() {
 					}
 					if(ee==8)
 					{
-					gates.push({x:ix,y:iy,t:3,div:createBrick(ix,iy,'./wall/completeg_g.png')});
+					gates.push({x:ix,y:iy,t:3,div:createBrick(ix,iy,'./wall/completeg_g1.png')});
 					}
 					if(ee==9)
 					{
@@ -324,10 +324,10 @@ gates.forEach(function(e)
 				
 				//e.div.style.marginTop= e.y+12;
 				
-				e.div.style.height= 50;
-				setTimeout(function() { e.div.style.zIndex=5000;
-										e.div.style.backgroundImage="url('wall/completeb.png')";
-										}, 500);
+				e.div.style.height= 52;
+				setTimeout(function() { //e.div.style.zIndex=5000;
+										e.div.style.backgroundImage="url('wall/completeb1.png')";
+										}, 700);
 				//e.div.parentNode.removeChild(e.div);SS
 				//gotKey=false;
 				switch(e.t)
