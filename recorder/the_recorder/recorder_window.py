@@ -22,9 +22,11 @@ class Example(tk.Tk):
         self.framerate=tk.IntVar()
         labela="set recording time"
         self.sound = tk.StringVar()
+        self.fast = tk.StringVar()
         self.duration.set("10")
         self.framerate.set(24)
         self.sound.set("sound")
+        self.fast.set("slow")
         #
         self.floater = FloatingWindow(self)
         #
@@ -45,6 +47,9 @@ class Example(tk.Tk):
         check = ttk.Checkbutton(self.mainframe, text='Record sound', command=None, variable=self.sound,
 	    onvalue='sound', offvalue='mute')
         check.grid(column=1, row=4, sticky=('W', 'E'))
+        check1 = ttk.Checkbutton(self.mainframe, text='Play in 24fps', command=None, variable=self.fast,
+	    onvalue='fast', offvalue='slow')
+        check1.grid(column=1, row=5, sticky=('W', 'E'))
     def recordVideo(self):
         self.title("RECORDING "+str(self.duration.get())+"s "+str(self.framerate.get())+"fps "+self.floater.geometry()+" "+self.sound.get())
         
@@ -55,7 +60,7 @@ class Example(tk.Tk):
                 is_recording=True;
                 self.dugme.config(text="Stop");
                 self.floater.attributes("-alpha", 0.0)
-                recorder_main.start(que, round(self.framerate.get()), parsegeometry(self.floater.geometry()),self.sound.get()=="sound")
+                recorder_main.start(que, round(self.framerate.get()), parsegeometry(self.floater.geometry()),self.sound.get()=="sound",self.fast.get()=="fast")
                 
             else:
                 #dugme['text']="Record"

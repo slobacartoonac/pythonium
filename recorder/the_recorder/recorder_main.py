@@ -8,9 +8,10 @@ import grabscreean
 import recorder_sound
 from moviepy.editor import *
 import zlib
-tmp_max=1024*1024*1000;
+import struct
+tmp_max=1024*1024*500;
 #most of this code is writen by slobacartoonac@hotmail.com
-sizes=[];
+#sizes=[];
 
 def info(title):
     print title
@@ -20,6 +21,7 @@ def info(title):
     print 'process id:', os.getpid()
 
 def producer(mQue,fps,screen,sound):
+    
     total_bytes=0;
     frame_bytes=screen[0]*screen[1]*4
     tmp_current=0;
@@ -27,7 +29,8 @@ def producer(mQue,fps,screen,sound):
     que=Queue.Queue()
     w= open("tmp%i.bin" %tmp_num,"wb")
         
-    global original
+    global original,sizes
+    sizes=[]
     original=(screen[0],screen[1])
     image_data = grabscreean.run("",(screen[2],screen[3]),original)
     wo=open("tmpOn.bin","wb")
@@ -36,8 +39,8 @@ def producer(mQue,fps,screen,sound):
     if sound:
         t1 = Thread(target=recorder_sound.record, args=(que,))
         t1.start();
-    que.get();
-    time.sleep(1);
+        que.get();
+        time.sleep(1);
     print "start gather"
     last=time.time();
     frames=0
@@ -51,7 +54,7 @@ def producer(mQue,fps,screen,sound):
         if difference<(frames+5)/fps:
             image_data = grabscreean.run(image_data,(screen[2],screen[3]),original)
             cdata=zlib.compress(image_data,1)
-        sizes.append(len(cdata));
+        w.write(struct.pack(b"=I",len(cdata)));
         w.write(cdata);
         tmp_current+=frame_bytes
         if tmp_current>tmp_max:
@@ -76,11 +79,12 @@ def producer(mQue,fps,screen,sound):
         print "joind"
     return frames
     
-def consumer(frames,fps1,screen,sound):
+def consumer(frames,fps1,screen,sound,fast=False):
 
     original=(screen[0],screen[1])
-
-    filename="output"
+    if(fast):
+        fps1=24
+    filename="output\\output"
     number=0
     fpath=filename+str(number)+".mp4"
     while os.path.isfile(fpath):
@@ -99,7 +103,7 @@ def consumer(frames,fps1,screen,sound):
     for_delete.append(tmp_fname)
     r= open(tmp_fname,"rb")
     for i in xrange(frames):
-        printscreen_pil = zlib.decompress(r.read(sizes.pop(0)));
+        printscreen_pil = zlib.decompress(r.read(struct.unpack(b"=I", r.read(4))[0]));
         if not printscreen_pil:
             print frames,"<-tolko"
             print "kraj obrade"
@@ -138,7 +142,7 @@ def consumer(frames,fps1,screen,sound):
     if sound: os.remove("atmp.wav")
     print "done "+fpath
     print "removeing temps"
-    while len(for_delete) > 0 : os.remove(for_delete.pop())
+    #while len(for_delete) > 0 : os.remove(for_delete.pop())
 if __name__ == '__main__':
     print "startujem proces"
 
@@ -149,11 +153,12 @@ def record(duration,fps,screen,sound):
     frames=int(duration*fps)
     producer(frames,fps,screen,sound)
     consumer(frames,fps,screen,sound)
-def start(mQue,fps,screen,sound):
-    t2 = Thread(target=threadStart, args=(mQue,fps,screen,sound,))
+    
+def start(mQue,fps,screen,sound,fast=False):
+    t2 = Thread(target=threadStart, args=(mQue,fps,screen,sound,fast,))
     t2.start();
-def threadStart(mQue,fps,screen,sound):
+def threadStart(mQue,fps,screen,sound,fast):
     frames=producer(mQue,fps,screen,sound)
-    consumer(frames,fps,screen,sound)
+    consumer(frames,fps,screen,sound,fast)
     
     
