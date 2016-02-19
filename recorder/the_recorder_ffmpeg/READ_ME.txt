@@ -1,0 +1,3 @@
+-You must install Python 2.7
+-You must download extract and install (add to system path 'bin' folder) ffmpeg for this program to work.
+-You must install PyAudio
