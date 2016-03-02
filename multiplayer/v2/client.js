@@ -2,7 +2,7 @@ function Conect(){
 	var ret={}
 	ret.respond=null;
 //creating socket connection with host on port 3000
-var socket = io.connect(window.location.hostname.toString()+':3000', {reconnect: true});
+var socket = io.connect('94.228.234.61'+':3000', {reconnect: true});
 //register socket event on msg
 socket.on('msg', function(msg){
    console.log(msg);
