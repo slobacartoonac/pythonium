@@ -81,7 +81,7 @@ def consumer(comun,fps1,screen,sound,fast=False):
     print fpath
    
     p=Popen(['ffmpeg','-y','-f', 'rawvideo', '-pix_fmt', 'rgb32', '-s' ,str(original[0])+'x'+str(original[1]),
-             '-r', str(fps1) ,'-i', '-' ,'-an', '-vf' ,"vflip" ,'-f',  'h264', '-r', str(fps1), 'vtmp.mp4'],shell=True, bufsize=99999999, stdin=PIPE )
+             '-r', str(fps1) ,'-fflags' ,'+genpts','-i', '-' ,'-an', '-vf' ,"vflip" ,'-f',  'h264', '-r', str(fps1), 'vtmp.mp4'],shell=True, bufsize=99999999, stdin=PIPE )
     
     while 1:
         try:
@@ -100,7 +100,7 @@ def consumer(comun,fps1,screen,sound,fast=False):
             p.stdin.write(image_data)
         except: fps1=fps1
     p.terminate();
-    merg=Popen(['ffmpeg' ,'-i', 'vtmp.mp4' ,'-i', 'atmp.wav', 
+    merg=Popen(['ffmpeg' ,'-fflags' ,'+genpts','-i', 'vtmp.mp4' ,'-i', 'atmp.wav', 
         '-c:v' ,'copy' ,'-c:a','aac' ,'-strict' ,'experimental', fpath
              ],shell=True, bufsize=99999999, stdin=PIPE )
     
