@@ -27,13 +27,15 @@ function createDiv(x,y,image)
 			iDiv.style.marginTop=y;
 			iDiv.style.position='absolute'
 			iDiv.style.zIndex= y;
-			document.getElementsByTagName('body')[0].appendChild(iDiv);
+			container.appendChild(iDiv);
 			return iDiv;
 
 }
 //bricks in level
 bricks=[];
 empty=[];
+
+container=null;
 
 size={x:0,y:0};
 play=false;
@@ -84,9 +86,10 @@ function startGame() {
 			iDiv.className='noselect';
 			iDiv.style.position='absolute';
 			iDiv.onclick=function(){play=(false==play)};
-			document.getElementsByTagName('body')[0].appendChild(iDiv);
-			document.getElementsByTagName('body')[0].onclick=clickControl;
-			size={x:document.innerWidth/20-3,y:document.innerHeight/20-3};
+			container=document.getElementsByTagName('body')[0];
+			container.appendChild(iDiv);
+			container.onclick=clickControl;
+			size={x:window.innerWidth/20-3,y:window.innerHeight/20-3};
 
 			bricks=[];
 			var ix=20;
