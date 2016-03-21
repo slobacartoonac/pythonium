@@ -81,8 +81,9 @@ function delBrick(vx,vy)
 function startGame() {
 			//adding background
 			iDiv = document.createElement('div');
-			iDiv.style.backgroundColor='green';
-			iDiv.innerHTML="Play";
+			iDiv.style.backgroundImage = "url('play.png')";
+			iDiv.style.width=90;
+			iDiv.style.height=50;
 			iDiv.className='noselect';
 			iDiv.style.position='absolute';
 			iDiv.onclick=function(){play=(false==play)};
@@ -117,6 +118,7 @@ function startGame() {
 
 function clickControl(e)
 {
+e.preventDefault();
 ix=int(e.pageX/20-0.5);
 iy=int(e.pageY/20-0.5);
 if(isBrick(ix,iy))
