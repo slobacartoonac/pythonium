@@ -184,7 +184,7 @@ toCre.forEach( function(e)
 	bricks.push({x:e.x,y:e.y,c:0,div: createDiv(e.x*20,e.y*20,'./ork20.png')});
 });
 
-
+empty=[];
 
 
 }
