@@ -39,9 +39,20 @@ container=null;
 
 size={x:0,y:0};
 play=false;
+function convert(vx,vy)
+{
+	if(vx<0) vx+=size.x;
+	vx%=size.x;
+	if(vy<0) vy+=size.y;
+	vy%=size.y;
+	return {x: vx,y:vy};
+}
 
 function isBrick(vx,vy)
 {
+	var r=convert(vx,vy);
+	vx=r.x;
+	vy=r.y;
 	for(var i=0;i<bricks.length;i++)
 	{
 	if(bricks[i].x==vx&&bricks[i].y==vy)
@@ -52,13 +63,17 @@ function isBrick(vx,vy)
 
 function toEmpty(vx,vy)
 {
-	if(vx<0||vy<0||vy>size.y||vx>size.x) return false;
+	var r=convert(vx,vy);
+	vx=r.x;
+	vy=r.y;
 	for(var i=0;i<empty.length;i++)
 	{
-	if(empty[i].x==vx&&empty[i].y==vy)
+	if(empty[i].x==vx&&empty[i].y==vy){
+		empty[i].n+=1;
 		return false;
+		}
 	}
-	empty.push({x:vx,y:vy});
+	empty.push({x:vx,y:vy,n:1});
 	return true;
 }
 
@@ -90,7 +105,7 @@ function startGame() {
 			container=document.getElementsByTagName('body')[0];
 			container.appendChild(iDiv);
 			container.onclick=clickControl;
-			size={x:window.innerWidth/20-3,y:window.innerHeight/20-3};
+			size={x:int(window.innerWidth/20-1),y:int(window.innerHeight/20-1)};
 
 			bricks=[];
 			var ix=20;
@@ -141,7 +156,6 @@ function update()
 {
 if(!play) return;
 var toDel=[];
-var toCre=[];
 
 bricks.forEach(function(e)
 			{
@@ -161,28 +175,12 @@ bricks.forEach(function(e)
 			});
 empty.forEach(function(e)
 			{
-			var nabers=0;
-				if(isBrick(e.x+1,e.y))nabers+=1;
-				if(isBrick(e.x-1,e.y))nabers+=1;
-				
-				if(isBrick(e.x,e.y+1))nabers+=1;
-				if(isBrick(e.x,e.y-1))nabers+=1;
-				
-				if(isBrick(e.x+1,e.y+1))nabers+=1;
-				if(isBrick(e.x+1,e.y-1))nabers+=1;
-				
-				if(isBrick(e.x-1,e.y+1))nabers+=1;
-				if(isBrick(e.x-1,e.y-1))nabers+=1;
-			if(nabers==3) toCre.push({x:e.x,y:e.y});
+			if(e.n==3) bricks.push({x:e.x,y:e.y,c:0,div: createDiv(e.x*20,e.y*20,'./ork20.png')});
 			});
 toDel.forEach( function(e)
 {
 	delBrick(e.x,e.y);
 })
-toCre.forEach( function(e)
-{
-	bricks.push({x:e.x,y:e.y,c:0,div: createDiv(e.x*20,e.y*20,'./ork20.png')});
-});
 
 empty=[];
 
