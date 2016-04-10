@@ -7,9 +7,7 @@ import json
 from Tkinter import Tk
 from tkFileDialog import askopenfilename
 
-Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
-file_path = askopenfilename() # show an "Open" dialog box and return the path to the selected file
-print(file_path)
+Tk().withdraw()file_path = askopenfilename() print(file_path)
 
 
 # Initialize the game engine
@@ -145,8 +143,6 @@ done = False
 clock = pygame.time.Clock()
 while not done:
  
-    # This limits the while loop to a max of 10 times per second.
-    # Leave this out and we will use all CPU we can.
     clock.tick(10)
      
     for event in pygame.event.get(): # User did something
@@ -166,10 +162,6 @@ while not done:
             if event.key == pygame.K_RETURN:
                 save_state()
 
- 
-    # All drawing code happens after the for loop and but
-    # inside the main while done==False loop.
-     
     # Clear the screen and set the screen background
     screen.fill((140,140,140))
     for a in xrange(0,img.get_rect().size[0],40):
@@ -180,10 +172,6 @@ while not done:
             pygame.draw.rect(screen, (170,170,170), [a, b, 20, 20])
     
  
-
-    
-    
-    
     screen.blit(img,(0,0))
     for z in triangles:
         pygame.draw.polygon(screen, RED, [vertices[z[0]],vertices[z[2]],vertices[z[1]]], 6)
@@ -203,5 +191,4 @@ while not done:
             
     pygame.display.flip()
  
-# Be IDLE friendly
 pygame.quit()
