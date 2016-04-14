@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <title>Key Game</title>
+	<style>
+	html, body, #header {
+    margin: 0 ;
+    padding: 0 ;
+	background-color: #000000;
+}
+	
+	
+	.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+	-webkit-transition: margin .1s linear , height .1s linear;
+	-moz-transition: margin .1s linear;
+	-o-transition: margin .1s linear;
+	transition: margin .1s linear;
+	}
+	.walls {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+	-webkit-transition: margin .5s linear , height .5s linear;
+	-moz-transition: margin .5s linear , height .5s linear;
+	-o-transition: margin .5s linear , height .5s linear;
+	transition: margin .5s linear , height .5s linear;
+	}
+  #console
+  {
+    position: absolute;
+    right: 0px;
+    width: 250px;
+    border: 3px solid #73AD21;
+    padding: 10px;
+    color: #73AD21;
+    font-size: 20px;
+  }
+    #operation, #fightLog
+  {
+    right: 10px;
+    float:left;
+    width: 230px;
+    background-color: #133D01;
+    padding: 10px;
+    color: #73AD21;
+    font-size: 20px;
+  }
+	</style>
+  <script type="text/javascript" src="./js/buttons.js"></script>
+	<script type="text/javascript" src="./js/game.js"></script>
+  <script type="text/javascript" src="./js/tools.js"></script>
+  </head>
+  <body class='noselect'>
+    <div id="map"></div>
+    <div id="console">
+      <p id="players">
+        
+      </p>
+      Selected:<p id="selected"></p>
+      Do:<div id="operation"></div>
+      Fights:<div id="fightLog"></div>
+      </div></br>
+  </body>
+</html>
