@@ -42,14 +42,28 @@
     padding: 10px;
     color: #73AD21;
     font-size: 20px;
+    background-color: #111111;
   }
-    #operation, #fightLog
+    #operation
   {
     right: 10px;
     float:left;
     width: 230px;
+    min-height: 64px;
     background-color: #133D01;
-    padding: 10px;
+    margin:10px;
+    color: #73AD21;
+    font-size: 20px;
+  }
+  
+  #fightLog
+  {
+    right: 10px;
+    float:left;
+    width: 230px;
+    min-height: 64px;
+    background-color: #133D01;
+    margin:10px;
     color: #73AD21;
     font-size: 20px;
   }
@@ -65,8 +79,11 @@
         
       </p>
       Selected:<p id="selected"></p>
+      <div>
       Do:<div id="operation"></div>
-      Fights:<div id="fightLog"></div>
+      </div>
+      <div>
+      Fights:<div id="fightLog"></div><div>
       </div></br>
   </body>
 </html>

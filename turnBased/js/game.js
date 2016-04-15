@@ -31,9 +31,18 @@ var playerChar=["r","b","g"];
 var typeString=["thank","pvo","plane","base"];
 var typeChar=["t","p","a"];
 var typeMove=[4,5,8,0];
-var typeDamage=[[50,20,35,0],[80,50,20,0],[30,80,50,0],[50,10,50,0]];
-var typeCost=[30,100,150];
+var typeDamage=[[50,20,60,20],[80,50,20,20],[30,80,50,20],[50,10,50,0]];
+var typeCost=[55,100,150];
 var fightLog=[];
+
+function getImageLink(pl,type,armed)
+{
+	var pt=playerChar[pl]+typeChar[type];
+	if(armed)
+		return "./vehicles64/"+pt+"a.png";
+	else
+		return "./vehicles64/"+pt+"n.png";
+}
 
 
 function getVehicle(ix,iy)
@@ -69,8 +78,11 @@ function fightVehicle(ix,iy,fight)
 	if(toBeet.armed)
 	{
 		damage=Math.random()*typeDamage[fight.type][toBeet.type];
-		fight.pow-=damage
-		toBeet.armed=false;
+		fight.pow-=damage;
+		if(toBeet.type!=3){
+			toBeet.armed=false;
+			toBeet.div.style.backgroundImage="url("+getImageLink(toBeet.player,toBeet.type,toBeet.armed)+")";
+			}
 		upradeFights(toBeet,fight,damage,fight.pow<0);
 		if(fight.pow<0)
 			game.vehicle=game.vehicle.filter(function(el){
@@ -87,6 +99,8 @@ function fightVehicle(ix,iy,fight)
 		damage=Math.random()*typeDamage[toBeet.type][fight.type];
 		toBeet.pow-=damage
 		fight.armed=false;
+		if(fight.div)
+			fight.div.style.backgroundImage="url("+getImageLink(fight.player,fight.type,fight.armed)+")";
 		upradeFights(fight,toBeet,damage,toBeet.pow<0)
 		if(toBeet.pow<0){
 			game.vehicle=game.vehicle.filter(function(el){
@@ -102,6 +116,8 @@ function fightVehicle(ix,iy,fight)
 				 game.players[fight.player].score+=1;
 				 game.players[fight.player].base.pow+=500;
 				 game.players[toBeet.player].base=null;
+				 game.world.appendChild(createTimeBox(150,300,400,100,"Player "+playerString[toBeet.player]+" has been defeated!!",5));
+				 setTimeout(function(){window.location="./index.html";},6000);
 			 }
 			}
 	}
@@ -117,6 +133,8 @@ function refreshVehicles()
 		var veh=game.vehicle[i]
 		veh.move=typeMove[veh.type];
 		veh.armed=true;
+		if(veh.type!=3)
+			veh.div.style.backgroundImage="url("+getImageLink(veh.player,veh.type,veh.armed)+")";
 	}
 }
 function getNet(pl)
@@ -267,10 +285,12 @@ function defaultSelectFunc(epos){
 		if(game.players[game.pl].base&&Math.abs(game.players[game.pl].base.x-epos.x)<3&&Math.abs(game.players[game.pl].base.y-epos.y)<3)
 			for(var i=0;i<3;i++){
 				var pt=playerChar[game.pl]+typeChar[i];
-				game.actions.push(new Button64([epos.x,epos.y,game.pl,i],createUnit,"./vehicles64/"+pt+"a.png",game.operationS))
+				if(mapCost[map[epos.y][epos.x]]<4)
+					game.actions.push(new Button64([epos.x,epos.y,game.pl,i],createUnit,"./vehicles64/"+pt+"a.png",game.operationS))
 			};
 		if(!game.players[game.pl].base){
-			game.actions.push(new Button64([epos.x,epos.y,game.pl],
+			if(mapCost[map[epos.y][epos.x]]<4)
+				game.actions.push(new Button64([epos.x,epos.y,game.pl],
 			function(args)
 			{
 				var x=args[0],y=args[1],pl=args[2];
@@ -297,9 +317,7 @@ function moveSelectFunc(epos)
 			game.infoS.innerHTML+=playerString[sVehicle.player]+" "+typeString[sVehicle.type]+" armed: "+sVehicle.armed+"<br>power: "+sVehicle.pow+"<br>can move: "+sVehicle.move;
 	game.actions.push(new Button64([epos.x,epos.y],
 	function(args){
-		game.moving=null;
-		game.selectFunc=defaultSelectFunc;
-		selectControl({x:args[0],y:args[1]});
+		moveStop(args,true);
 	},"./graphics64/cancelMove.png",game.operationS))
 	game.actions.push(new Button64([epos.x,epos.y],nextPlayer,"./graphics64/next.png",game.operationS))
 	moveUnit([epos.x,epos.y]);
@@ -311,20 +329,20 @@ function nextPlayer(args)
 {
 	game.pl+=1;
 	game.pl%=game.players.length;
-	game.moving=null;
-	game.selectFunc=defaultSelectFunc;
+	moveStop(args,false);
 	refreshVehicles();
 	selectControl({x:args[0],y:args[1]});
 	updatePlayerLabel();
+	
 }
 
 function createUnit(args)
 {
 	var x=args[0],y=args[1],pl=args[2],itype=args[3];
-	var pt=playerChar[pl]+typeChar[itype];
+	
 	if(game.players[pl].base.pow-typeCost[itype]<=0) return;
 	game.players[pl].base.pow-=typeCost[itype];
-	var veh={x:x,y:y,player:pl,type:itype,div:createBrick(x*64,y*64,"./vehicles64/"+pt+"a.png"),move:0,armed:false,pow:100};
+	var veh={x:x,y:y,player:pl,type:itype,div:createBrick(x*64,y*64,getImageLink(pl,itype,false)),move:0,armed:false,pow:100};
 	game.vehicle.push(veh)	
 	selectControl({x:args[0],y:args[1]});
 	updatePlayerLabel();
@@ -335,6 +353,13 @@ function moveStart(args)
 	game.selectFunc=moveSelectFunc;
 	
 	selectControl({x:args[0],y:args[1]});
+}
+function moveStop(args,refresh)
+{
+	game.moving=null;
+	game.selectFunc=defaultSelectFunc;
+	if(refresh)
+		selectControl({x:args[0],y:args[1]});
 }
 //function for moveing player
 function moveUnit(args)
@@ -387,12 +412,21 @@ function moveUnit(args)
 			if(!skip)
 				game.moving.div.style.marginTop=game.moving.y*64;
 		}
-		if(game.moving.move<=0||game.moving.div==null){
-			game.moving=null;
-			game.selectFunc=defaultSelectFunc;
-			selectControl({x:args[0],y:args[1]});
+		if(game.moving.move<=0||game.moving.div==null||nextCost(game.moving.x,game.moving.y)>game.moving.move){
+			moveStop(args,true);
 			}
 	}
+}
+function nextCost(ix,iy)
+{
+	var min=mapCost[map[iy+1][ix]];
+	var pot=mapCost[map[iy-1][ix]];
+	if(pot<min)min=pot;
+	pot=mapCost[map[iy][ix+1]];
+	if(pot<min)min=pot;
+	pot=mapCost[map[iy][ix-1]];
+	if(pot<min)min=pot;
+	return min;
 }
 
 function updateInfo()

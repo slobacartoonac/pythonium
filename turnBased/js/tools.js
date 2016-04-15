@@ -140,6 +140,7 @@ function createTimeBox(x,y,sx,sy,question,time)
 	respontTo.innerHTML=question;
 	respontTo.style.width='60%';
 	respontTo.style.margin='auto';
+	respontTo.style.fontSize=30;
 	newBox.appendChild(respontTo);
 	setTimeout(function(){newBox.parentNode.removeChild(newBox);},time*1000);
 	
