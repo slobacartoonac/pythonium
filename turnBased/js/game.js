@@ -371,13 +371,14 @@ function moveStart(args)
 {
 	game.moving=args[2];
 	game.selectFunc=moveSelectFunc;
-	
 	selectControl({x:args[0],y:args[1]});
 }
 function moveStop(args,refresh)
 {
 	game.moving=null;
 	game.selectFunc=defaultSelectFunc;
+	if(game.moveIcon)
+			removeObject(game.moveIcon);
 	if(refresh)
 		selectControl({x:args[0],y:args[1]});
 }
@@ -389,12 +390,16 @@ function moveUnit(args)
 	{
 		var skip=false;
 		var toBe=0;
+		var fight=false;
+		var tFight=false;
 		while(ix!=game.moving.x&&game.moving.move>0&&!skip)
 		{
 			if(ix<game.moving.x)
 			{
 				toBe=map[game.moving.y][game.moving.x-1];
-				if(game.moving.move-mapCost[toBe]>=0&&!fightVehicle(game.moving.x-1,game.moving.y,game.moving)){
+				tFight=fightVehicle(game.moving.x-1,game.moving.y,game.moving);
+				if(tFight) fight=tFight;
+				if(game.moving.move-mapCost[toBe]>=0&&!tFight){
 					game.moving.x-=1;
 					game.moving.move-=mapCost[toBe];
 				} else skip=true;
@@ -402,7 +407,9 @@ function moveUnit(args)
 			else
 			{
 				toBe=map[game.moving.y][game.moving.x+1];
-				if(game.moving.move-mapCost[toBe]>=0&&!fightVehicle(game.moving.x+1,game.moving.y,game.moving)){
+				tFight=fightVehicle(game.moving.x+1,game.moving.y,game.moving);
+				if(tFight) fight=tFight;
+				if(game.moving.move-mapCost[toBe]>=0&&!tFight){
 				game.moving.x+=1;
 				game.moving.move-=mapCost[toBe];
 				}else skip=true;
@@ -416,7 +423,9 @@ function moveUnit(args)
 			if(iy<game.moving.y)
 			{
 				toBe=map[game.moving.y-1][game.moving.x];
-				if(game.moving.move-mapCost[toBe]>=0&&!fightVehicle(game.moving.x,game.moving.y-1,game.moving)){
+				tFight=fightVehicle(game.moving.x,game.moving.y-1,game.moving);
+				if(tFight) fight=tFight;
+				if(game.moving.move-mapCost[toBe]>=0&&!tFight){
 				game.moving.y-=1
 				game.moving.move-=mapCost[toBe];
 				}else skip=true;
@@ -424,7 +433,9 @@ function moveUnit(args)
 			else
 			{
 				toBe=map[game.moving.y+1][game.moving.x];
-				if(game.moving.move-mapCost[toBe]>=0&&!fightVehicle(game.moving.x,game.moving.y+1,game.moving)){
+				tFight=fightVehicle(game.moving.x,game.moving.y+1,game.moving);
+				if(tFight) fight=tFight;
+				if(game.moving.move-mapCost[toBe]>=0&&!tFight){
 				game.moving.y+=1
 				game.moving.move-=mapCost[toBe];
 				}else skip=true;
@@ -432,7 +443,10 @@ function moveUnit(args)
 			if(!skip)
 				game.moving.div.style.marginTop=game.moving.y*64;
 		}
-		if(game.moving.move<=0||game.moving.div==null||nextCost(game.moving.x,game.moving.y)>game.moving.move){
+		if(game.moveIcon)
+			removeObject(game.moveIcon);
+		game.moveIcon={div:createBrick(game.moving.x*64,game.moving.y*64,'./graphics64/move.png')};
+		if(game.moving.move<=0||game.moving.div==null||nextCost(game.moving.x,game.moving.y)>game.moving.move||fight){
 			moveStop(args,true);
 			}
 	}
