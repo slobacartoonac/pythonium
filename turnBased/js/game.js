@@ -80,6 +80,10 @@ function upradeFights(agresor,damaged,damage,fatal)
 	}, this);
 	game.fightS.innerHTML=tFights;
 }
+function getVehicleStatus(veh)
+{
+	return playerString[veh.player]+" "+typeString[veh.type]+" armed: "+veh.armed+"<br>power: "+int(veh.pow)+"<br>can move: "+veh.move;
+}
 function fightVehicle(ix,iy,fight)
 {
 	var toBeet=getVehicle(ix,iy);
@@ -290,7 +294,7 @@ function defaultSelectFunc(epos){
 	game.actions=[];
 	var sVehicle=getVehicle(epos.x,epos.y);
 	if(sVehicle){
-			game.infoS.innerHTML+=playerString[sVehicle.player]+" "+typeString[sVehicle.type]+" armed: "+sVehicle.armed+"<br>power: "+int(sVehicle.pow)+"<br>can move: "+sVehicle.move;
+			game.infoS.innerHTML+=getVehicleStatus(sVehicle);
 			if(game.pl==sVehicle.player&&sVehicle.move>0)
 			{
 				game.actions.push(new Button64([epos.x,epos.y,sVehicle],moveStart,"./graphics64/move.png",game.operationS,"Move "+typeString[sVehicle.type],game.descS))
@@ -330,7 +334,7 @@ function moveSelectFunc(epos)
 	game.operationS.innerHTML="";
 	var sVehicle=getVehicle(epos.x,epos.y);
 	if(sVehicle)
-			game.infoS.innerHTML+=playerString[sVehicle.player]+" "+typeString[sVehicle.type]+" armed: "+sVehicle.armed+"<br>power: "+sVehicle.pow+"<br>can move: "+sVehicle.move;
+			game.infoS.innerHTML+=getVehicleStatus(sVehicle);
 	game.actions.push(new Button64([epos.x,epos.y],
 	function(args){
 		moveStop(args,true);
