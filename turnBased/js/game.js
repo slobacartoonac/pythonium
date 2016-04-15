@@ -96,7 +96,8 @@ function fightVehicle(ix,iy,fight)
 			toBeet.div.style.backgroundImage="url("+getImageLink(toBeet.player,toBeet.type,toBeet.armed)+")";
 			}
 		upradeFights(toBeet,fight,damage,fight.pow<0);
-		if(fight.pow<0)
+		if(fight.pow<0){
+			game.players[toBeet.player].base.pow+=20;
 			game.vehicle=game.vehicle.filter(function(el){
 				if(el.x==fight.x&&el.y==fight.y)
 				{
@@ -105,6 +106,7 @@ function fightVehicle(ix,iy,fight)
 				}
 				return true;
 			});
+			}
 	}
 	if(fight.armed)
 	{
@@ -115,6 +117,7 @@ function fightVehicle(ix,iy,fight)
 			fight.div.style.backgroundImage="url("+getImageLink(fight.player,fight.type,fight.armed)+")";
 		upradeFights(fight,toBeet,damage,toBeet.pow<0)
 		if(toBeet.pow<0){
+			game.players[fight.player].base.pow+=20;
 			game.vehicle=game.vehicle.filter(function(el){
 				if(el.x==toBeet.x&&el.y==toBeet.y)
 				{
