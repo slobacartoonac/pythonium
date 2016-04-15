@@ -32,7 +32,7 @@ var typeString=["thank","pvo","plane","base"];
 var typeChar=["t","p","a"];
 var typeMove=[4,5,8,0];
 var typeDamage=[[50,20,60,20],[80,50,20,20],[30,80,50,20],[50,10,50,0]];
-var typeCost=[55,100,150];
+var typeCost=[55,100,150,0];
 var fightLog=[];
 
 function getImageLink(pl,type,armed)
@@ -55,6 +55,18 @@ function getVehicle(ix,iy)
 			return veh;
 	}
 	return null;
+}
+function getVehicleDesc(type)
+{
+	var ret="Type: "+typeString[type]+"<br>cost: "+typeCost[type]+"<br>move points: "+typeMove[type]+"<br>";
+	ret+="<select style=\"font-size:20px;background-color: #888888;\" ><option value=\"Against\">type  atck:rcv_dmg</option>"
+	for(var i=0;i<4;i++){
+		var sizer=typeString[i];
+		while(sizer.length<8)sizer+=" ";
+		ret+="<option value=\""+sizer+"\">"+sizer+typeDamage[i][type]+":"+typeDamage[type][i]+"</option>";
+		}
+	ret+="</select>"
+	return ret;
 }
 function upradeFights(agresor,damaged,damage,fatal)
 {
@@ -202,6 +214,7 @@ function startGame() {
 			game.operationS=document.getElementById('operation');
 			game.fightS=document.getElementById('fightLog');
 			game.playersS=document.getElementById('players');
+			game.descS=document.getElementById('desc');
 			game.pl=0;
 			game.players.push({base:null,vehicles:0,score:0});
 			game.players.push({base:null,vehicles:0,score:0});
@@ -277,7 +290,7 @@ function defaultSelectFunc(epos){
 			game.infoS.innerHTML+=playerString[sVehicle.player]+" "+typeString[sVehicle.type]+" armed: "+sVehicle.armed+"<br>power: "+int(sVehicle.pow)+"<br>can move: "+sVehicle.move;
 			if(game.pl==sVehicle.player&&sVehicle.move>0)
 			{
-				game.actions.push(new Button64([epos.x,epos.y,sVehicle],moveStart,"./graphics64/move.png",game.operationS))
+				game.actions.push(new Button64([epos.x,epos.y,sVehicle],moveStart,"./graphics64/move.png",game.operationS,"Move "+typeString[sVehicle.type],game.descS))
 			}
 		}
 	else{
@@ -286,7 +299,7 @@ function defaultSelectFunc(epos){
 			for(var i=0;i<3;i++){
 				var pt=playerChar[game.pl]+typeChar[i];
 				if(mapCost[map[epos.y][epos.x]]<4)
-					game.actions.push(new Button64([epos.x,epos.y,game.pl,i],createUnit,"./vehicles64/"+pt+"a.png",game.operationS))
+					game.actions.push(new Button64([epos.x,epos.y,game.pl,i],createUnit,"./vehicles64/"+pt+"a.png",game.operationS,getVehicleDesc(i),game.descS))
 			};
 		if(!game.players[game.pl].base){
 			if(mapCost[map[epos.y][epos.x]]<4)
@@ -300,11 +313,11 @@ function defaultSelectFunc(epos){
 				updatePlayerLabel();
 				selectControl({x:args[0],y:args[1]});		
 			}
-			,"./structures64/"+playerChar[game.pl]+"b.png",game.operationS))
+			,"./structures64/"+playerChar[game.pl]+"b.png",game.operationS,getVehicleDesc(3),game.descS))
 			
 		}
 		}
-		game.actions.push(new Button64([epos.x,epos.y],nextPlayer,"./graphics64/next.png",game.operationS))
+		game.actions.push(new Button64([epos.x,epos.y],nextPlayer,"./graphics64/next.png",game.operationS,"End turn",game.descS))
 //if(direction) {direction=null;stop(); return;}
 //direction={x:Math.round((Math.round((e.pageX)/50-0.5)*50-player.x)/10)*10,y:Math.round((Math.round((e.pageY)/50-0.5)*50-player.y)/10)*10};
 }
@@ -318,8 +331,8 @@ function moveSelectFunc(epos)
 	game.actions.push(new Button64([epos.x,epos.y],
 	function(args){
 		moveStop(args,true);
-	},"./graphics64/cancelMove.png",game.operationS))
-	game.actions.push(new Button64([epos.x,epos.y],nextPlayer,"./graphics64/next.png",game.operationS))
+	},"./graphics64/cancelMove.png",game.operationS,"Stop moving "+typeString[game.moving.type],game.descS))
+	game.actions.push(new Button64([epos.x,epos.y],nextPlayer,"./graphics64/next.png",game.operationS,"End turn",game.descS))
 	moveUnit([epos.x,epos.y]);
 };
 
