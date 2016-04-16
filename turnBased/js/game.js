@@ -136,7 +136,7 @@ function fightVehicle(ix,iy,fight)
 			if(toBeet.type==3)
 			 {
 				 game.players[fight.player].score+=1;
-				 game.players[fight.player].base.pow+=500;
+				 game.players[fight.player].base.pow+=180;
 				 game.players[toBeet.player].base=null;
 				 game.players[toBeet.player].live=false;
 				 game.world.appendChild(createTimeBox(150,300,400,100,"Player "+playerString[toBeet.player]+" has been defeated!!",3));
