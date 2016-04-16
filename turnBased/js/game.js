@@ -396,7 +396,7 @@ function MoveFight(moving,dx,dy)
 {
 	var retSkip = false;
 	var toBe=map[moving.y+dy][moving.x+dx];
-	if(moving.move-mapCost[toBe]>=0,!fightVehicle(moving.x+dx,moving.y+dy,moving)){
+	if(moving.move-mapCost[toBe]>=0&&!fightVehicle(moving.x+dx,moving.y+dy,moving)){
 					moving.x+=dx;
 					moving.y+=dy;
 					moving.move-=mapCost[toBe];		
