@@ -103,6 +103,7 @@ function fightVehicle(ix,iy,fight)
 		upradeFights(toBeet,fight,damage,fight.pow<0);
 		if(fight.pow<0){
 			game.players[toBeet.player].base.pow+=20;
+			game.players[toBeet.player].score+=1;
 			game.vehicle=game.vehicle.filter(function(el){
 				if(el.x==fight.x&&el.y==fight.y)
 				{
@@ -123,6 +124,7 @@ function fightVehicle(ix,iy,fight)
 		upradeFights(fight,toBeet,damage,toBeet.pow<0)
 		if(toBeet.pow<0){
 			game.players[fight.player].base.pow+=20;
+			game.players[fight.player].score+=1;
 			game.vehicle=game.vehicle.filter(function(el){
 				if(el.x==toBeet.x&&el.y==toBeet.y)
 				{
@@ -211,10 +213,11 @@ function updatePlayerLabel()
 	{
 		if(i==game.pl)
 			game.playersS.innerHTML+="=> "
-		game.playersS.innerHTML+=i+". "+playerString[i].toUpperCase();
+		game.playersS.innerHTML+=playerString[i].toUpperCase();
 		if(el.base) game.playersS.innerHTML+= " "+int(el.base.pow);
 		else game.playersS.innerHTML+= " -"
 		game.playersS.innerHTML+= ":"+getNet(i);
+		game.playersS.innerHTML+= ":"+el.score;
 		if(i==game.pl) game.playersS.innerHTML+=" <=";
 		i++;
 		game.playersS.innerHTML+="<br>";
@@ -231,7 +234,7 @@ function startGame(nPlayers) {
 			game.descS=document.getElementById('desc');
 			game.pl=0;
 			for(var i=0;i<nPlayers;i++)
-				game.players.push({base:null,vehicles:0,score:0});
+				game.players.push({base:null,live:true,score:0});
 			var ix=0;
 			var iy=0;
 			var maxx=0;
@@ -355,6 +358,7 @@ function nextPlayer(args)
 {
 	game.pl+=1;
 	game.pl%=game.players.length;
+	if(!game.players[game.pl].live) nextPlayer(args);
 	moveStop(args,false);
 	refreshVehicles();
 	selectControl({x:args[0],y:args[1]});
