@@ -26,13 +26,13 @@ var map=
 var game={world:null,infoS:null,pl:0,players:[],vehicle:[],selectFunc:defaultSelectFunc};
 var mapString=["ground","hill","road","water","city"];
 var mapCost=[2,4,1,100,2];
-var playerString=["first","second","third"];
-var playerChar=["r","b","g"];
+var playerString=["first","second","third","forth"];
+var playerChar=["r","b","g","c"];
 var typeString=["thank","pvo","plane","base"];
-var typeChar=["t","p","a"];
-var typeMove=[4,5,8,0];
+var typeChar=["t","p","a","b"];
+var typeMove=[4,6,8,0];
 var typeDamage=[[50,20,60,20],[80,50,20,20],[30,80,50,20],[50,10,50,0]];
-var typeCost=[55,100,150,0];
+var typeCost=[40,75,105,0];
 var fightLog=[];
 
 function getImageLink(pl,type,armed)
@@ -89,6 +89,7 @@ function fightVehicle(ix,iy,fight)
 	var toBeet=getVehicle(ix,iy);
 	if(!toBeet) return false;
 	if(toBeet.player==fight.player) return true;
+	if(!fight.armed) return true;
 	//{x:x,y:y,player:pl,type:itype,div:createBrick(x*64,y*64,"./vehicles64/"+pt+"a.png"),move:0,armed:false,pow:100}
 	var damage=0;
 	if(toBeet.armed)
@@ -135,8 +136,14 @@ function fightVehicle(ix,iy,fight)
 				 game.players[fight.player].score+=1;
 				 game.players[fight.player].base.pow+=500;
 				 game.players[toBeet.player].base=null;
-				 game.world.appendChild(createTimeBox(150,300,400,100,"Player "+playerString[toBeet.player]+" has been defeated!!",5));
-				 setTimeout(function(){window.location="./index.html";},6000);
+				 game.players[toBeet.player].live=false;
+				 game.world.appendChild(createTimeBox(150,300,400,100,"Player "+playerString[toBeet.player]+" has been defeated!!",3));
+				 var pliving=game.players.filter(function(e){return e.live});
+				 if(pliving.length<=1)
+				 setTimeout(function(){
+					 game.world.appendChild(createTimeBox(150,300,400,100,"Player "+playerString[fight.player]+" has WON!!",5));
+					 setTimeout(function(){window.location="./index.html";},6000);
+					 },4000);
 			 }
 			}
 	}
@@ -213,7 +220,7 @@ function updatePlayerLabel()
 		game.playersS.innerHTML+="<br>";
 	})
 }
-function startGame() {
+function startGame(nPlayers) {
 			
 			game.world=document.getElementById('map');
 			game.world.onclick=clickControl;
@@ -223,9 +230,8 @@ function startGame() {
 			game.playersS=document.getElementById('players');
 			game.descS=document.getElementById('desc');
 			game.pl=0;
-			game.players.push({base:null,vehicles:0,score:0});
-			game.players.push({base:null,vehicles:0,score:0});
-			bricks=[];
+			for(var i=0;i<nPlayers;i++)
+				game.players.push({base:null,vehicles:0,score:0});
 			var ix=0;
 			var iy=0;
 			var maxx=0;
@@ -382,6 +388,17 @@ function moveStop(args,refresh)
 	if(refresh)
 		selectControl({x:args[0],y:args[1]});
 }
+function MoveFight(moving,dx,dy)
+{
+	var retSkip = false;
+	var toBe=map[moving.y+dy][moving.x+dx];
+	if(moving.move-mapCost[toBe]>=0,!fightVehicle(moving.x+dx,moving.y+dy,moving)){
+					moving.x+=dx;
+					moving.y+=dy;
+					moving.move-=mapCost[toBe];		
+		} else retSkip=true;
+	return retSkip;
+}
 //function for moveing player
 function moveUnit(args)
 {
@@ -390,33 +407,15 @@ function moveUnit(args)
 	{
 		var skip=false;
 		var toBe=0;
-		var fight=false;
-		var tFight=false;
 		while(ix!=game.moving.x&&game.moving.move>0&&!skip)
 		{
 			if(ix<game.moving.x)
 			{
-				toBe=map[game.moving.y][game.moving.x-1];
-				if(game.moving.move-mapCost[toBe]>=0){
-					tFight=fightVehicle(game.moving.x-1,game.moving.y,game.moving);
-					if(tFight) fight=tFight;
-					else{
-					game.moving.x-=1;
-					game.moving.move-=mapCost[toBe];
-					}
-				} else skip=true;
+				skip=MoveFight(game.moving,-1,0);
 			}
 			else
 			{
-				toBe=map[game.moving.y][game.moving.x+1];
-				if(game.moving.move-mapCost[toBe]>=0){
-					tFight=fightVehicle(game.moving.x+1,game.moving.y,game.moving);
-					if(tFight) fight=tFight;
-					else{
-						game.moving.x+=1;
-						game.moving.move-=mapCost[toBe];
-					}
-				}else skip=true;
+				skip=MoveFight(game.moving,1,0);
 			}
 			if(!skip)
 				game.moving.div.style.marginLeft=game.moving.x*64;
@@ -426,28 +425,11 @@ function moveUnit(args)
 		{
 			if(iy<game.moving.y)
 			{
-				toBe=map[game.moving.y-1][game.moving.x];
-				
-				if(game.moving.move-mapCost[toBe]>=0){
-					tFight=fightVehicle(game.moving.x,game.moving.y-1,game.moving);
-					if(tFight) fight=tFight;
-					else{
-						game.moving.y-=1
-						game.moving.move-=mapCost[toBe];
-					}
-				}else skip=true;
+				skip=MoveFight(game.moving,0,-1);
 			}
 			else
 			{
-				toBe=map[game.moving.y+1][game.moving.x];
-				if(game.moving.move-mapCost[toBe]>=0){
-					tFight=fightVehicle(game.moving.x,game.moving.y+1,game.moving);
-					if(tFight) fight=tFight;
-					else{
-						game.moving.y+=1
-						game.moving.move-=mapCost[toBe];
-					}
-				}else skip=true;
+				skip=MoveFight(game.moving,0,1);
 			}
 			if(!skip)
 				game.moving.div.style.marginTop=game.moving.y*64;
@@ -455,7 +437,7 @@ function moveUnit(args)
 		if(game.moveIcon)
 			removeObject(game.moveIcon);
 		game.moveIcon={div:createBrick(game.moving.x*64,game.moving.y*64,'./graphics64/move.png')};
-		if(game.moving.move<=0||game.moving.div==null||nextCost(game.moving.x,game.moving.y)>game.moving.move||fight){
+		if(game.moving.move<=0||game.moving.div==null||nextCost(game.moving.x,game.moving.y)>game.moving.move){
 			moveStop(args,true);
 			}
 	}
@@ -487,15 +469,6 @@ function testPath(posn)
 function update()
 {
 
-bricks.forEach(function(e)
-			{
-				//if(colide(posn,e))
-				//{
-				//if position is not free then new proposition is not to move
-				//		posn.y=player.y;
-				//		posn.x=player.x; 
-				//}
-			});
 
 }
 //when you rise press player stop
@@ -507,8 +480,25 @@ function moveBox()
 {
 
 }
+function mainMenu()
+{
+	var plNum=0;
+	var tPl=0;
+	document.getElementById("map").appendChild(createChoiceBox(100,100,500,500,"How manny players are playing?",[2,3,4],function(e){
+		plNum=e;
+		document.getElementById("map").appendChild(createRespondBox(100,100,500,500,"What is pl "+(tPl+1)+" name?",function(e1){setPlayerName(tPl,e1,plNum)}));
+	 }));
+}
+function setPlayerName(tpl,pname,npl)
+{
+	playerString[tpl]=pname;
+	tpl+=1;
+	if(tpl<npl)
+		document.getElementById("map").appendChild(createRespondBox(100,100,500,500,"What is pl "+(tpl+1)+" name?",function(e1){setPlayerName(tpl,e1,npl)}));
+	else startGame(npl);
+}
 //start the magic
-window.onload = startGame;
+window.onload = mainMenu;
 //add controls
 window.onkeypress=moveBox;
 window.onkeyup=stop;
