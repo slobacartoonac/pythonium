@@ -397,21 +397,25 @@ function moveUnit(args)
 			if(ix<game.moving.x)
 			{
 				toBe=map[game.moving.y][game.moving.x-1];
-				tFight=fightVehicle(game.moving.x-1,game.moving.y,game.moving);
-				if(tFight) fight=tFight;
-				if(game.moving.move-mapCost[toBe]>=0&&!tFight){
+				if(game.moving.move-mapCost[toBe]>=0){
+					tFight=fightVehicle(game.moving.x-1,game.moving.y,game.moving);
+					if(tFight) fight=tFight;
+					else{
 					game.moving.x-=1;
 					game.moving.move-=mapCost[toBe];
+					}
 				} else skip=true;
 			}
 			else
 			{
 				toBe=map[game.moving.y][game.moving.x+1];
-				tFight=fightVehicle(game.moving.x+1,game.moving.y,game.moving);
-				if(tFight) fight=tFight;
-				if(game.moving.move-mapCost[toBe]>=0&&!tFight){
-				game.moving.x+=1;
-				game.moving.move-=mapCost[toBe];
+				if(game.moving.move-mapCost[toBe]>=0){
+					tFight=fightVehicle(game.moving.x+1,game.moving.y,game.moving);
+					if(tFight) fight=tFight;
+					else{
+						game.moving.x+=1;
+						game.moving.move-=mapCost[toBe];
+					}
 				}else skip=true;
 			}
 			if(!skip)
@@ -423,21 +427,26 @@ function moveUnit(args)
 			if(iy<game.moving.y)
 			{
 				toBe=map[game.moving.y-1][game.moving.x];
-				tFight=fightVehicle(game.moving.x,game.moving.y-1,game.moving);
-				if(tFight) fight=tFight;
-				if(game.moving.move-mapCost[toBe]>=0&&!tFight){
-				game.moving.y-=1
-				game.moving.move-=mapCost[toBe];
+				
+				if(game.moving.move-mapCost[toBe]>=0){
+					tFight=fightVehicle(game.moving.x,game.moving.y-1,game.moving);
+					if(tFight) fight=tFight;
+					else{
+						game.moving.y-=1
+						game.moving.move-=mapCost[toBe];
+					}
 				}else skip=true;
 			}
 			else
 			{
 				toBe=map[game.moving.y+1][game.moving.x];
-				tFight=fightVehicle(game.moving.x,game.moving.y+1,game.moving);
-				if(tFight) fight=tFight;
-				if(game.moving.move-mapCost[toBe]>=0&&!tFight){
-				game.moving.y+=1
-				game.moving.move-=mapCost[toBe];
+				if(game.moving.move-mapCost[toBe]>=0){
+					tFight=fightVehicle(game.moving.x,game.moving.y+1,game.moving);
+					if(tFight) fight=tFight;
+					else{
+						game.moving.y+=1
+						game.moving.move-=mapCost[toBe];
+					}
 				}else skip=true;
 			}
 			if(!skip)
