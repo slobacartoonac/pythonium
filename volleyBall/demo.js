@@ -14,7 +14,7 @@
         friction: .3,
         restitution: 0,
         color: 'blue',
-        maxVelocityX: 10,
+        maxVelocityX: 8,
 		maxVelocityY: 30
     });
 	var scorep=0;
@@ -43,9 +43,9 @@
         }
 
         // when airborn movement is restricted
-        var force = 90;
+        var force = 100;
         if (!standingOn) {
-            force = 0;
+            force/=2;
         }
 
         // move left
@@ -102,7 +102,7 @@
 	world.createEntity(groundTemplate, {width: 20, x: 10, y: 0});
 	world.createEntity(groundTemplate, {width: 0.2,height:15, x: 0, y: 7});
 	world.createEntity(groundTemplate, {width: 0.2,height:15, x: 20, y: 7});
-	world.createEntity(groundTemplate, {width: 0.2,height:5, x: 10, y: 12});
+	world.createEntity(groundTemplate, {width: 0.2,height:5.5, x: 10, y: 12});
     
 
     // Car thing
@@ -113,7 +113,7 @@
         image: 'rock3.png',
 		restitution: .6,
 		density: .2,
-		friction: .5,
+		friction: .2,
 		maxVelocityX: 10,
 		maxVelocityY: 10,
         imageStretchToFit: true
@@ -139,7 +139,7 @@
         y: 11,
         height: 0.8,
         width: 0.8,
-        friction: .3,
+        friction: .5,
         restitution: 0,
         color: 'blue',
         maxVelocityX: 8,
@@ -152,26 +152,27 @@
         var standingOn;
         var pos = cpu.position();
 		var bpos=ball.position();
+        var v=ball._body.GetLinearVelocity();
 		var direction=0;
         standingOn=pos.y>12;
         
-		if(pos.x>bpos.x+1||pos.x>17)
+		if(pos.x+cpu._body.GetLinearVelocity().x/10>bpos.x+1+v.x/10)
 		{
 			direction=-1;
 		}
-		if(pos.x<bpos.x+0.4||pos.x<12)
+		if(pos.x+cpu._body.GetLinearVelocity().x/10<bpos.x+0.2+v.x/10)
 		{
 			if(direction==0)
 			direction=+1;
 		}
         // jump
         if (standingOn) {
-			if(	Math.abs((pos.x-0.5)-bpos.x)<1.2&& bpos.y>8)
+			if(	Math.abs((pos.x-0.5+cpu._body.GetLinearVelocity().x/10)-bpos.x-v.y/10)<1&& bpos.y+v.y/5>8)
 				cpu.applyImpulse(45);
         }
 
         // when airborn movement is restricted
-        var force = 90;
+        var force = 100;
         if (!standingOn) {
             force = force/=2;
         }
@@ -188,6 +189,10 @@
             cpu.friction(.1);
             return false;
 			}
+        if(direction==0)
+        {
+            cpu.friction(3);
+        }
 	
 	}
 	,100);
