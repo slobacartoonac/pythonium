@@ -8,6 +8,13 @@ socket.on('msg', function(msg){
    console.log(msg);
    ret.updateEnemyLabel(msg);
   });
+setTimeout(function(){
+if(ret.respond==null)
+	ret.respond=createReadyBox(50,100,500,200,"Server not found.</br>Go back to previous page",function(e)
+	{
+		history.go(-1);
+	});},6000)
+
 socket.on('id', function(msg){
 	game.id=msg.id;
   });
