@@ -178,7 +178,7 @@ function update()
 	document.player.x=posn.x; 
 	//test if player escaped
 	if(posn.y>450||posn.y<0||posn.x>450||posn.x<0) {
-		alert("Congratulations you escaped the lamest prison :D \nBut you got cot! :/");
+		alert("Congratulations you escaped the lamest prison. :D \nBut still you got caught! :/");
 		//restarting to starting point
 		gate.open=false;
 		document.gGate.style.backgroundImage="url('gatec.png')";
