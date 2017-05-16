@@ -4,19 +4,23 @@ var SNode = require('./sunNode.js');
 var Ploter=require('./ploter.js');
 
 var draw=new Ploter(800,600);
+window.addEventListener('mousewheel', function(e){
+    if(e.wheelDelta > 0) {draw.scalex*=1.1;draw.scaley*=1.1} else {{draw.scalex*=0.88;draw.scaley*=0.88;}};
+
+});
 document.body.appendChild(draw.getCanvas());
 var all=[];
 var tolook=0;
 document.body.onclick=function(){tolook++;}
 all.push(new SNode([0,0],[0,0],5,all));
-for(var i=0;i<800;i++){
+for(var i=0;i<200;i++){
         var angle=Math.random()*2*Math.PI;
-        var radius = 30+Math.random()*600;
+        var radius = 50+Math.random()*600;
         var x=Math.sin(angle)*radius;
         var y=Math.cos(angle)*radius;
         var tan=Math.atan2(x, y)+Math.PI/2;
 
-        var el=new SNode([x,y],[2*Math.sin(tan)+Math.random()*4-2,/*Math.random()*10-5*/2*Math.cos(tan)+Math.random()*4-2],1+Math.random()/2,all);
+        var el=new SNode([x,y],[2*Math.sin(tan)+Math.random()*4-2,/*Math.random()*10-5*/2*Math.cos(tan)+Math.random()*4-2],1+Math.random()*2,all);
         all.push(el);
 }
 
@@ -26,7 +30,7 @@ function work(){
     draw.clear();
     draw.grid(position[0],position[1],100,100);
     draw.points(
-        all.map(function(elem){return [elem.positions[0]-position[0],elem.positions[1]-position[1],elem.radius,elem.invalid?"#ffffff":"#008800"]})
+        all.map(function(elem){return [elem.positions[0],elem.positions[1],elem.radius,elem.radius>7?"#ff9933":"#008800"]})
     );
     
     all.forEach(function(e){
@@ -35,11 +39,11 @@ function work(){
     });
     all=all.filter(function(e){return !e.invalid;})
     
-    position=[all[tolook%all.length].positions[0]-400,
-                all[tolook%all.length].positions[1]-300];
+    position=[all[tolook%all.length].positions[0],
+                all[tolook%all.length].positions[1]];
     all.forEach(function(e){e.move()});
     console.log(all.length+"---------------------------------");
-    if(!stable||true) setTimeout(work,10);
+    if(!stable||true) setTimeout(work,30);
     else{
         all.forEach(function(el){
     })
@@ -62,14 +66,21 @@ this.canvas = document.createElement("canvas");
 this.canvas.width=width||320;
 this.canvas.height=height||240;
 this.context = this.canvas.getContext('2d')
+this.scalex=1;
+this.scaley=1;
  
  
 }
 Ploter.prototype.points=function(points)
 {
     points.forEach(function(element) {
+        var x=(element[0]-this.startx)*this.scalex;
+        var y=(element[1]-this.starty)*this.scaley;
+        if(x<0||y<0||x>this.canvas.width||y>this.canvas.height)
+            return;
         this.context.beginPath();
-        this.context.arc(element[0]>0?element[0]<this.canvas.width?element[0]:this.canvas.width:0, element[1]>0?element[1]<this.canvas.height?element[1]:this.canvas.height:0, element[2]>0?element[2]:0, 0, 2 * Math.PI, false);
+        this.context.arc(x,y,
+             element[2]>0?element[2]*this.scalex:0, 0, 2 * Math.PI, false);
         this.context.fillStyle = element[3];
         this.context.fill();
         this.context.lineWidth = 2;
@@ -84,6 +95,12 @@ Ploter.prototype.clear=function(points)
 
 Ploter.prototype.grid=function(centerx,centery,sizex,sizey)
 {
+    this.startx=centerx-this.canvas.width/2/this.scalex;
+    this.starty=centery-this.canvas.height/2/this.scaley;
+    centerx*=this.scalex;
+    centerx*=this.scaley;
+    sizex*=this.scalex;
+    sizey*=this.scaley;
     var mx=((centerx/sizex)|0 )* sizex - centerx;
     var my=((centery/sizey)|0 )* sizey - centery;
     var startx=mx;
@@ -126,7 +143,12 @@ Ploter.prototype.getCanvas=function()
 
 module.exports=Ploter;
 },{}],3:[function(require,module,exports){
-
+if (!Math.cbrt) {
+  Math.cbrt = function(x) {
+    var y = Math.pow(Math.abs(x), 1/3);
+    return x < 0 ? -y : y;
+  };
+}
 function SNode(positions,speeds,radius,inputs)
 {
     this.radius=radius;
@@ -149,7 +171,7 @@ SNode.prototype.compute=function()
             this.merge(element);
             return;
         }
-        var asc = Math.pow(element.radius,2)*Math.PI / Math.pow(testDist,2);
+        var asc = Math.pow(element.radius,3)*Math.PI / Math.pow(testDist,2)*3/4;
         for (var i=0;i<this.positions.length;i++)
         {
             this.speeds[i]+=asc*(element.positions[i]-this.positions[i])/testDist;
@@ -162,9 +184,9 @@ SNode.prototype.compute=function()
 }
 SNode.prototype.merge=function(testNode)
 {
-    var massA=Math.pow(this.radius,2)*Math.PI;
-    var massB=Math.pow(testNode.radius,2)*Math.PI;
-    var newRadious= Math.sqrt( (massA+massB)/Math.PI );
+    var massA=Math.pow(this.radius,3)*Math.PI*3/4;
+    var massB=Math.pow(testNode.radius,3)*Math.PI*3/4;
+    var newRadious= Math.cbrt( (massA+massB)/Math.PI*4/3 );
 
     for (var i=0;i< this.speeds.length;i++)
     {
