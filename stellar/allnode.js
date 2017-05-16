@@ -80,10 +80,10 @@ Ploter.prototype.points=function(points)
             return;
         this.context.beginPath();
         this.context.arc(x,y,
-             element[2]>0?element[2]*this.scalex:0, 0, 2 * Math.PI, false);
+             element[2]*this.scalex>2?element[2]*this.scalex:2, 0, 2 * Math.PI, false);
         this.context.fillStyle = element[3];
         this.context.fill();
-        this.context.lineWidth = 2;
+        this.context.lineWidth = 1;
         this.context.strokeStyle = '#333333';
         this.context.stroke();
     }, this);
@@ -99,8 +99,10 @@ Ploter.prototype.grid=function(centerx,centery,sizex,sizey)
     this.starty=centery-this.canvas.height/2/this.scaley;
     centerx*=this.scalex;
     centerx*=this.scaley;
-    sizex*=this.scalex;
+    /*sizex*=this.scalex;
     sizey*=this.scaley;
+    sizex=sizex<50?50:sizex;
+    sizey=sizey<50?50:sizey;*/
     var mx=((centerx/sizex)|0 )* sizex - centerx;
     var my=((centery/sizey)|0 )* sizey - centery;
     var startx=mx;
