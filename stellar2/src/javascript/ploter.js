@@ -4,7 +4,7 @@ const squareDistance = (point, nodeB) =>
 	var square=0
 	for(var i=0;i<point.length;i++)
 		square+=Math.pow((point[i]-nodeB.positions[i]),2)
-	return isNaN(square) ? 0 : square
+	return isNaN(square) || square<1 ? 1 : square
 }
 
 var COLORS= 16*16
@@ -12,10 +12,12 @@ var COLORS= 16*16
 function Ploter(width,height){
 
 	this.canvas = document.createElement('canvas')
-	this.canvas.width=width||320
-	this.canvas.height=height||240
+	this.canvas.width = width || 320
+	this.canvas.height = height || 240
 	this.context = this.canvas.getContext('2d')
+	this.img = this.context.createImageData(this.canvas.width, this.canvas.height)
 }
+
 Ploter.prototype.points=function(points, view)
 {
 	const { context, canvas: {width: canvasWidth, height: canvasHeight} }= this
@@ -70,6 +72,62 @@ Ploter.prototype.drawMass = function(points, view){
 				'00'+
 				[...Array(2)].map((_,i)=>color[i + color.length - 2]||'0').join('')
 			context.fill()
+		}
+	}
+}
+
+Ploter.prototype.drawMass2 = function(points, view){
+	const {x: centerX, y: centerY, scale} = view
+	const { context, canvas: {width: canvasWidth, height: canvasHeight} }= this
+	const canvasWidthHalf = canvasWidth / 2
+	const canvasHeightHalf = canvasHeight / 2
+	const stepX = 4
+	const stepY = 4
+	const halfStepX = stepX / 2
+	const halfStepY = stepY / 2
+	var startx = (centerX + canvasWidthHalf) % stepX
+	var starty = (centerY + canvasHeightHalf) % stepY
+	var inverseScale = stepY / scale
+	for (var x = startx; x <= canvasWidth; x += stepX) {
+		var realX = (x - canvasWidthHalf) / scale + centerX
+		var realY = (starty - canvasHeightHalf) / scale + centerY
+		for (var y = starty; y <= canvasHeight; y += stepY) {
+			var sum = 0
+			var pointsLength = points.length
+			for(var i=0;i<pointsLength;i++){
+				var point = points[i]
+				sum += 3000 * point.mass / squareDistance([realX , realY],point)
+			}
+			var colorMin2= Math.min(sum/16.0,COLORS-1)
+			var colorMin= Math.max(Math.min(sum,COLORS - 1) - colorMin2*colorMin2*0.3, 0)
+			this.imgRect(x - halfStepX, y - halfStepY, stepX, stepY, [colorMin2, 0, colorMin, 255])
+			realY += inverseScale
+		}
+	}
+	context.putImageData(this.img, 0, 0)
+}
+
+Ploter.prototype.imgRect=function(x , y, width, height, color)
+{
+	const realWidth = Math.max(Math.min(width + 1, this.canvas.width - x), 0)
+	const realHeight = Math.max(Math.min(height + 1, this.canvas.height - y),0)
+	const realX = Math.max(Math.round(x),0)
+	const realY = Math.max(Math.round(y),0)
+	const data = this.img.data
+	const startX = realX * 4
+	const endX = realWidth * 4 + startX 
+	const rowLength = this.canvas.width * 4
+	const startY = realY * rowLength
+	const endY = realHeight * rowLength + startY
+	for( var i = startY; i < endY; i += rowLength)
+	{
+		for( var j = startX; j < endX; j += 4)
+		{
+			var ij=i+j
+			data[ij]  = color[0]
+			data[ij+1]= color[1]
+			data[ij+2]= color[2]
+			data[ij+3]= color[3]
 		}
 	}
 }

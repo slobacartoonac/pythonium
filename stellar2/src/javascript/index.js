@@ -9,6 +9,7 @@ var position={x: 0, y:0, scale:1}
 window.addEventListener('mousewheel', function(e){
 	position.scale*= e.wheelDelta > 0 ? 1.1 : 0.88
 })
+
 var canvas = draw.getCanvas()
 document.body.appendChild(canvas)
 var touch = new Touch(canvas, 100)
@@ -24,7 +25,8 @@ all.push(new SNode([100,0],[0,1],3,all))
 all.push(new SNode([300,0],[0,0.8],4,all))
 all.push(new SNode([600,0],[0,0.8],6,all))
 all.push(new SNode([-450,0],[0,-0.8],8,all))
-all.push(new SNode([0,800],[-0.5,0],5,all))
+all.push(new SNode([0,1000],[-0.7,0],5,all))
+all.push(new SNode([0,1030],[-1,0],3,all))
 const generateItem= (size)=>{
 	var angle=Math.random()*2*Math.PI
 	var radius = 200 + Math.random()*2000
@@ -41,17 +43,18 @@ const generateItem= (size)=>{
 }
 
 setInterval(()=>{
-	all.length<300 && generateItem()
+	all.length<100 && generateItem()
 }, 200)
 	
-for(var i=0;i<100;i++)
+for(var i=0;i<150;i++)
 	generateItem()
 		
 
 
 function work(){
-	draw.clear()
-	draw.drawMass(all,position)
+	//draw.clear()
+	//draw.drawMass(all,position)
+	draw.drawMass2(all,position)
 	//draw.grid(100,100,position)
 	draw.points(
 		all.map((elem)=> [elem.positions[0],elem.positions[1],elem.radius,elem.radius>7?'#ff9933':'#aaffbb'])

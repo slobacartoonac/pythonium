@@ -26,7 +26,7 @@ SNode.prototype.compute=function()
 		if(this==element || element.invalid) return
 		var squareDist = this.squareDistance( element )
 		var realDist = Math.sqrt(squareDist)
-		if(realDist < this.radius+element.radius
+		if(realDist < this.radius + element.radius
 			&& this.radius > element.radius )
 		{
 			element.invalid=true
