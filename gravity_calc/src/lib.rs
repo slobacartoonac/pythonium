@@ -62,15 +62,22 @@ impl Gravity {
         buffer_length: u32,
         planets: &[f32],
         planets_length: u32,
+        view: &[f32]
     ){
         let u_width:u32 = self.width;
         let row_length:u32 = u_width*4;
         let u_width_f32 = u_width as f32;
+        let with_half = self.width as f32/2.0;
+        let height_half = self.height as f32/2.0;
         let row_length_usize = row_length as usize;
         let planets_length_usize = planets_length as usize;
-        let half_length:u32 = buffer_length/2-row_length;
+        let half_length:u32 = buffer_length/2-row_length/2;
         let mut pi_x:f32 = 0.0;
         let mut pi_y:f32 = 0.0;
+        let view_start_x =  view[0] - (with_half-1.0)/view[2];
+        let mut view_x: f32 = view_start_x;
+        let mut view_y: f32 = view[1] - (height_half-1.0)/view[2];
+        let step = 2.0 / view[2];
         let mut offset:usize = 0;
         for i in (0..half_length as usize).step_by(8) {
             let mut sum: f32 = 0.0;
@@ -78,11 +85,12 @@ impl Gravity {
                 let x = planets[p_index];
                 let y = planets[p_index + 1];
                 let mass = planets[p_index + 2];
-                sum = sum + 300.0 * mass /
-                self.square_distance(pi_x as f32, pi_y as f32, x, y)
+                sum = sum + 800.0 * mass /
+                self.square_distance(view_x, view_y, x, y)
             }
-            let color_min2= cmp::min((sum/16.0) as i32,255);
-            let color_min= cmp::max(cmp::min(sum as i32,255) - color_min2*color_min2/4, 0);
+            let color_f32= sum/32.0;
+            let color_min2= cmp::min(color_f32 as i32,192);
+            let color_min= cmp::max(cmp::min(sum as i32,192) - (color_f32*color_f32) as i32, 0);
 
             let r:u8 = (color_min2).try_into().unwrap();
             let b:u8 = (color_min).try_into().unwrap();
@@ -107,11 +115,17 @@ impl Gravity {
             data[i+offset+7+row_length_usize]= a;
             pi_y = if (pi_x % u_width_f32) == u_width_f32 - 2.0 {
                 offset=offset+row_length_usize;
+                view_y += step;
                 pi_y + 2.0
             } else {
                 pi_y
             };
-            pi_x = (pi_x + 2.0) % u_width_f32;
+            pi_x += 2.0;
+            view_x += step;
+            if pi_x >= u_width_f32 {
+                pi_x = 0.0;
+                view_x = view_start_x;
+            } 
         }
     }
 

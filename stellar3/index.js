@@ -6,39 +6,70 @@ import Touch from './touch'
 
 
 
-var position={x: 400, y:300, scale:1}
+
+var position={x: 0, y:0, scale:1}
+var positionArray = new Float32Array([position.x, position.y, position.scale])
+window.addEventListener('mousewheel', function(e){
+	position.scale*= e.wheelDelta > 0 ? 1.1 : 0.88
+	positionArray = new Float32Array([position.x, position.y, position.scale])
+})
 
 var all=[]
-all.push(new SNode([400,100],[100,0],14,all))
-all.push(new SNode([467,120],[0,0],3,all))
-all.push(new SNode([897,100],[100,0],15,all))
-all.push(new SNode([340,232],[0,0],2,all))
-all.push(new SNode([123,767],[100,0],14,all))
-all.push(new SNode([890,543],[0,0],8,all))
-all.push(new SNode([553,221],[100,0],12,all))
-all.push(new SNode([412,345],[0,0],9,all))
+all.push(new SNode([0,0],[0,0],65,all, "Sun"))
+all.push(new SNode([255,0],[0,8],3,all, "Mercury"))
+all.push(new SNode([300,0],[0,10],4,all, "Venus"))
+all.push(new SNode([450,0],[0,10],7,all, "Earth"))
+all.push(new SNode([600,0],[0,10],4,all, "Mars"))
+all.push(new SNode([1400,0],[0,10],25,all, "Jupiter"))
+all.push(new SNode([1440,0],[0,12],2,all, "Europa"))
+all.push(new SNode([1450,0],[0,12],2,all, "Europa"))
+all.push(new SNode([2800,0],[0,10],5,all, "Saturn"))
+const generateItem= (size)=>{
+	var angle=Math.random()*2*Math.PI
+	var radius = 200 + Math.random()*2000
+	var x=Math.sin(angle)*radius
+	var y=Math.cos(angle)*radius
+	var tan=Math.atan2(x, y)-Math.PI/2
+
+	var el=new SNode(
+		[x,y],
+		[(10*Math.sin(tan)+Math.random()*14-7),
+			(10*Math.cos(tan)+Math.random()*14-7)],
+		size||(0.1+Math.random()),all)
+	all.push(el)
+}
+
+setInterval(()=>{
+	all.length<30 && generateItem()
+}, 200)
 
 // Construct the universe, and get its width and height.
-const width = 800;
-const height = 600;
+const canvas = document.getElementById("stellar3");
+const {width: widthC, height: heightC}= canvas.getBoundingClientRect();
+const [width, height] = [widthC / 2,heightC / 2 ]
 const gravity = Gravity.new(width,height);
 
 // Give the canvas room for all of our cells and a 1px border
 // around each of them.
-const canvas = document.getElementById("stellar3");
+
 var touch = new Touch(canvas, 100)
 touch.sub('force', ({delta})=>{
 	position = {...position, x: position.x - delta.x / position.scale,
 		y: position.y - delta.y / position.scale}
+	positionArray = new Float32Array([position.x, position.y, position.scale])
 })
-var draw=new Ploter(canvas, 800, 600)
+var draw=new Ploter(canvas, width, height)
 
 const ctx = draw.context;
 const fps=drawFPS(ctx)
 const img= ctx.createImageData(width, height)
 
+var planetsArray = new Float32Array(all.length*3);
+
 const drawGravity2 = () => {
-	var planetsArray = new Float32Array(all.length*3);
+	var planetsDataLength=all.length*3
+	if(planetsArray.length !== planetsDataLength)
+		planetsArray = new Float32Array(all.length*3);
 	var bufferIndex=0;
 	all.forEach((el)=> {
 		planetsArray[bufferIndex]=el.positions[0]
@@ -50,7 +81,8 @@ const drawGravity2 = () => {
 		img.data,
 		img.data.length,
 		planetsArray,
-		planetsArray.length
+		planetsDataLength,
+		positionArray
 	);
   ctx.putImageData(img, 0, 0);
 }
@@ -59,7 +91,11 @@ var i=0;
 const renderLoop = () => {
   drawGravity2();
   draw.points(
-	all.map((elem)=> [elem.positions[0],elem.positions[1],elem.radius,elem.radius>7?'#ff9933':'#aaffbb'])
+	all.map((elem)=> [elem.positions[0],
+	elem.positions[1],
+	elem.radius,elem.radius>30
+	?'#aa9933'
+	:'#B45F04'])
 	,position
 	)
   fps();
