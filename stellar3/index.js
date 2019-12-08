@@ -45,8 +45,7 @@ setInterval(()=>{
 
 // Construct the universe, and get its width and height.
 const canvas = document.getElementById("stellar3");
-const {width: widthC, height: heightC}= canvas.getBoundingClientRect();
-const [width, height] = [widthC / 2,heightC / 2 ]
+const [width, height] = [640,480]
 const gravity = Gravity.new(width,height);
 
 // Give the canvas room for all of our cells and a 1px border
@@ -79,7 +78,6 @@ const drawGravity2 = () => {
 	})
 	gravity.draw_planets(
 		img.data,
-		img.data.length,
 		planetsArray,
 		planetsDataLength,
 		positionArray

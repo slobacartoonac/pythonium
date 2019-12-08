@@ -14,6 +14,13 @@ pub struct Gravity {
     view: View
 }
 
+#[inline]
+fn square_distance(a_x: f32, a_y: f32, b_x: f32, b_y: f32)-> f32{
+    let r_x = a_x - b_x;
+    let r_y = a_y - b_y;
+    r_x.powf(2.0)+r_y.powf(2.0)+0.1
+}
+
 #[wasm_bindgen]
 impl Gravity {
     pub fn new(width: u32, height: u32) -> Gravity {
@@ -45,33 +52,21 @@ impl Gravity {
         }
     }
 
-    fn square_distance(&self, a_x: f32, a_y: f32, b_x: f32, b_y: f32)-> f32{
-        let r_x = a_x - b_x;
-        let r_y = a_y - b_y;
-        let square = r_x.powf(2.0)+r_y.powf(2.0);
-        if square < 1.0
-        {
-            1.0
-        } else{
-            square
-        }
-    }
-
     pub fn draw_planets(&self,
         data: &mut [u8],
-        buffer_length: u32,
         planets: &[f32],
         planets_length: u32,
         view: &[f32]
     ){
-        let u_width:u32 = self.width;
-        let row_length:u32 = u_width*4;
+        let buffer_length: usize = (self.width * self.height * 4) as usize;
+        let u_width:usize = self.width as usize;
+        let row_length:usize = u_width*4;
         let u_width_f32 = u_width as f32;
         let with_half = self.width as f32/2.0;
         let height_half = self.height as f32/2.0;
         let row_length_usize = row_length as usize;
         let planets_length_usize = planets_length as usize;
-        let half_length:u32 = buffer_length/2-row_length/2;
+        let half_length:usize = buffer_length/2;
         let mut pi_x:f32 = 0.0;
         let mut pi_y:f32 = 0.0;
         let view_start_x =  view[0] - (with_half-1.0)/view[2];
@@ -86,7 +81,7 @@ impl Gravity {
                 let y = planets[p_index + 1];
                 let mass = planets[p_index + 2];
                 sum = sum + 800.0 * mass /
-                self.square_distance(view_x, view_y, x, y)
+                square_distance(view_x, view_y, x, y)
             }
             let color_f32= sum/32.0;
             let color_min2= cmp::min(color_f32 as i32,192);
