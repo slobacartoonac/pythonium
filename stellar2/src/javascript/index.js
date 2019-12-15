@@ -1,8 +1,9 @@
 import SNode from './sunNode.js'
 import Ploter from './ploter.js'
 import Touch from './touch'
+import drawFPS from './drawFPS'
 
-var draw=new Ploter(800,600)
+var draw=new Ploter(640,480)
 
 var position={x: 0, y:0, scale:1}
 
@@ -11,6 +12,7 @@ window.addEventListener('mousewheel', function(e){
 })
 
 var canvas = draw.getCanvas()
+const fps=drawFPS(draw.context)
 document.body.appendChild(canvas)
 var touch = new Touch(canvas, 100)
 touch.sub('force', ({delta})=>{
@@ -18,36 +20,34 @@ touch.sub('force', ({delta})=>{
 		y: position.y - delta.y / position.scale}
 })
 
-
 var all=[]
-all.push(new SNode([0,0],[0,0],14,all))
-all.push(new SNode([100,0],[0,1],3,all))
-all.push(new SNode([300,0],[0,0.8],4,all))
-all.push(new SNode([600,0],[0,0.8],6,all))
-all.push(new SNode([-450,0],[0,-0.8],8,all))
-all.push(new SNode([0,1000],[-0.7,0],5,all))
-all.push(new SNode([0,1030],[-1,0],3,all))
+all.push(new SNode([0,0],[0,0],65,all, 'Sun'))
+all.push(new SNode([255,0],[0,8],3,all, 'Mercury'))
+all.push(new SNode([300,0],[0,10],4,all, 'Venus'))
+all.push(new SNode([450,0],[0,10],7,all, 'Earth'))
+all.push(new SNode([600,0],[0,10],4,all, 'Mars'))
+all.push(new SNode([1400,0],[0,10],25,all, 'Jupiter'))
+all.push(new SNode([1440,0],[0,12],2,all, 'Europa'))
+all.push(new SNode([1450,0],[0,12],2,all, 'Europa'))
+all.push(new SNode([2800,0],[0,10],5,all, 'Saturn'))
 const generateItem= (size)=>{
 	var angle=Math.random()*2*Math.PI
 	var radius = 200 + Math.random()*2000
 	var x=Math.sin(angle)*radius
 	var y=Math.cos(angle)*radius
-	var tan=Math.atan2(x, y)+Math.PI/2
+	var tan=Math.atan2(x, y)-Math.PI/2
 
 	var el=new SNode(
 		[x,y],
-		[(4*Math.sin(tan)+Math.random()*6-3)*0.1,
-			(4*Math.cos(tan)+Math.random()*6-3)*0.1],
+		[(10*Math.sin(tan)+Math.random()*14-7),
+			(10*Math.cos(tan)+Math.random()*14-7)],
 		size||(0.1+Math.random()),all)
 	all.push(el)
 }
 
 setInterval(()=>{
-	all.length<100 && generateItem()
+	all.length<30 && generateItem()
 }, 200)
-	
-for(var i=0;i<150;i++)
-	generateItem()
 		
 
 
@@ -60,12 +60,12 @@ function work(){
 		all.map((elem)=> [elem.positions[0],elem.positions[1],elem.radius,elem.radius>7?'#ff9933':'#aaffbb'])
 		,position
 	)
-    
+	fps()
 	all.forEach(function(e){
 		e.compute()   
 	})
 	const allLength=all.length
-	for(i=0;i<allLength;i++)
+	for(var i=0;i<allLength;i++)
 	{
 		const first=all.shift()
 		if(!first.invalid) all.push(first)
