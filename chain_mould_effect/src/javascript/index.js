@@ -21,20 +21,20 @@ touch.sub('force', ({delta})=>{
 })
 
 var all=[]
-var stabilex=-300
-var stabiley=0
+var stabilex=0
+var stabiley=200
 var stabileDistance=10
 for(var i =0 ; i < 196 ; i ++){
 	all.push(new RNode([stabilex,stabiley],[0,0],5,all, i))
 	var prewa=Math.atan2(
-		50*Math.cos(i/10.0),
-		0.3
+		-0.3,
+		50*Math.cos(i/10.0)
 		);
 	stabilex+= Math.cos(prewa)*stabileDistance
 	stabiley+= Math.sin(prewa)*stabileDistance
 }
 
-all.push(new RNode([stabilex+300,stabiley+100],[-10 ,0],0.0001,[], i))
+all.push(new RNode([stabilex+100,stabiley - 300],[ 0, 10],0.0001,[], i))
 all[all.length-1].drag=-0
 
 
