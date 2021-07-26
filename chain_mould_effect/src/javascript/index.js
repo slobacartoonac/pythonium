@@ -34,7 +34,7 @@ for(var i =0 ; i < 196 ; i ++){
 	stabiley+= Math.sin(prewa)*stabileDistance
 }
 
-all.push(new RNode([stabilex+100,stabiley - 300],[ 0, 10],0.0001,[], i))
+all.push(new RNode([stabilex+100,stabiley - 300],[ 0, 10],1,[], i))
 all[all.length-1].drag=-0
 
 
