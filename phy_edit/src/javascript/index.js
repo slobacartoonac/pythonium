@@ -45,8 +45,7 @@ all[all.length-1].drag=-0
 
 function work(){
 	draw.clear()
-	//draw.drawMass(all,position)
-	//mass.draw(all,position)
+	mass.draw(all,position)
 	grid.draw(100,100,position)
 	points.draw(
 		all.map((elem)=> [elem.positions[0],elem.positions[1],elem.radius,elem.radius>7?'#ff9933':'#aaffbb'])
