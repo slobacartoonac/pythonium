@@ -1,8 +1,8 @@
 
 function GridPloter(ctx, width,height){
 	this.context = ctx
-    this.width = width
-    this.height = height
+	this.width = width
+	this.height = height
 }
 
 GridPloter.prototype.draw=function(sizex,sizey, view)
@@ -11,15 +11,15 @@ GridPloter.prototype.draw=function(sizex,sizey, view)
 	const {x: centerX, y: centerY, scale} = view
 	const canvasWidthHalf = canvasWidth / 2
 	const canvasHeightHalf = canvasHeight / 2
-    var gridScale = scale
-    while(gridScale> 2)
-        gridScale /= 2
-    while(gridScale< 1)
-        gridScale *= 2
+	var gridScale = scale
+	while(gridScale> 2)
+		gridScale /= 2
+	while(gridScale< 1)
+		gridScale *= 2
 	const stepX = sizex * gridScale
 	const stepY = sizey * gridScale
-    var startx=( -centerX * scale + canvasWidthHalf) % stepX
-    var starty=( -centerY * scale + canvasHeightHalf) % stepY
+	var startx=( -centerX * scale + canvasWidthHalf) % stepX
+	var starty=( -centerY * scale + canvasHeightHalf) % stepY
 	context.beginPath()
 	for (var x = startx; x <= canvasWidth; x += stepX) {
 		context.moveTo( x , 0)
@@ -35,7 +35,7 @@ GridPloter.prototype.draw=function(sizex,sizey, view)
 	context.stroke()
 
 	var startx=(startx + stepX/2) % stepX
-    var starty=(starty + stepY/2) % stepY
+	var starty=(starty + stepY/2) % stepY
 
 	context.beginPath()
 	for (var x = startx; x <= canvasWidth; x += stepX) {

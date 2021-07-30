@@ -41,7 +41,7 @@ var stabiley=200
 var stabileDistance=12
 var prevEntity = null
 var entity = null
-for(var i = 0 ; i < 1500; i ++){
+for(var i = 0 ; i < 2500; i ++){
 	entity = manager.create()
 	manager.asign(new Transform([stabilex,stabiley]), entity)
 	manager.asign(new Physics([0,0], 5), entity)
@@ -79,6 +79,6 @@ function work(){
 	points.draw( position )
 	fps.draw()
 	physics.compute()
-	setTimeout(work,30)
+	setTimeout(work,0)
 }
 work()

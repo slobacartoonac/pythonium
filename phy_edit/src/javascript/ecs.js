@@ -20,6 +20,7 @@ function EntityManager() {
 	this._free_indices = []
 	this._entities = {}
 	this._components = {}
+	this.__entities_with_type = {}
 }
 
 EntityManager.prototype.create = function () {
@@ -52,12 +53,21 @@ EntityManager.prototype.destroy = function (e) {
 EntityManager.prototype.asign = function(component, e){
 	var entity_components = this._components[e.id]
 	if(!entity_components){
-		this._components[e.id] = [component]
+		this._components[e.id] = {
+			[component.constructor.name]: [component]
+		}
 		return
 	}
-	if(entity_components.find(comp=>component===comp))
+	var components_of_type = entity_components[component.constructor.name]
+	if(!components_of_type){
+		this._components[e.id][component.constructor.name] = [component]
+		return
+	}
+	if(components_of_type &&
+		entity_components[component.constructor.name].find(comp=>component===comp)
+		)
 		throw Error('Component is allready asiged')
-	entity_components.push(component)
+	entity_components[component.constructor.name].push(component)
 }
 
 EntityManager.prototype.get = function(c_type, e){
@@ -65,9 +75,11 @@ EntityManager.prototype.get = function(c_type, e){
 	if(!entity_components){
 		return []
 	}
-	return entity_components.filter(function(component){
-		return component instanceof c_type
-	})
+	var components_of_type = entity_components[c_type.name]
+	if(!components_of_type){
+		return []
+	}
+	return components_of_type
 }
 
 EntityManager.prototype.remove = function(component, e){
@@ -75,7 +87,11 @@ EntityManager.prototype.remove = function(component, e){
 	if(!entity_components){
 		return
 	}
-	this._components[e.id] = entity_components.filter(function(compon){
+	var components_of_type = entity_components[component.constructor.name]
+	if(!components_of_type){
+		return
+	}
+	entity_components[component.constructor.name] = entity_components[component.constructor.name].filter(function(compon){
 		return compon !== component
 	})
 }
@@ -86,29 +102,6 @@ EntityManager.prototype.getEnities = function(c_type){
 			return this.get(c_type, entity).length
 		}
 	)
-}
-
-EntityManager.prototype.compose = function(e){
-	var entity_components = this._components[e.id]
-	if(!entity_components){
-		return {}
-	}
-	var ret = {}
-	entity_components.forEach(element => {
-		Object.keys(element).forEach(key => {
-			if(ret[key]){
-				if(ret[key+'_list'])
-				{
-					ret[key+'_list'].push(element[key])
-					return
-				}
-				ret[key+'_list'] = [ret[key], element[key]]
-				return
-			}
-			ret[key] = element[key]
-		})
-	})
-	return ret
 }
 
 export { Entity,

@@ -20,7 +20,6 @@ function PhysicsEngine(manager, engines){
 }
 
 PhysicsEngine.prototype.compute = function(){
-    
 	this.engines.forEach(engine => engine.compute())
 	this.manager.getEnities(Physics).forEach(elem => {
 		var physics = this.manager.get(Physics, elem)[0]

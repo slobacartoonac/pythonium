@@ -2,7 +2,7 @@ import { Physics, Transform, ShapeCircle } from './physics.js'
 
 function ColisionEngine(manager){
 	this.manager = manager
-
+	this.physic_entity = null
 }
 
 function computeColision(
@@ -16,7 +16,7 @@ function computeColision(
 		var distanceX = (element.positions[0]-compute.positions[0])
 		var distanceY = (element.positions[1]-compute.positions[1])
 		var centerDistance = compute.radius + element.radius
-		if(distanceX > centerDistance || distanceY > centerDistance)
+		if(Math.abs(distanceX) > centerDistance || Math.abs(distanceY) > centerDistance)
 			return
             
 		var distanceAngle=Math.atan2( distanceY, distanceX )
@@ -40,6 +40,7 @@ function computeColision(
 
 ColisionEngine.prototype.compute= function()
 {
+
 	var physic_entity = this.manager.getEnities(Physics).map((elem)=>{
 		var circle = this.manager.get(ShapeCircle, elem)[0]
 		var transform = this.manager.get(Transform, elem)[0]
@@ -49,14 +50,15 @@ ColisionEngine.prototype.compute= function()
 			positions: transform.positions
 		}
 	})
-	physic_entity.forEach((elem) => {
+
+	for(var i = 0; i< physic_entity.length; i++){
+		var elem = physic_entity[i]
 		var force = computeColision(
 			elem,
 			physic_entity)
 		var physics = this.manager.get(Physics, elem.e)[0]
 		physics.applyForce(force)
 	}
-	)
 }
 
 export {
