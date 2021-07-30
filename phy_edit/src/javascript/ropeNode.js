@@ -19,53 +19,53 @@ RNode.prototype.computeMass= function () {
 	return Math.pow(this.radius,3)* Math.PI * this.massVolume
 }
 
-RNode.prototype.computeRope = function(compute,naibor,gravity)
+RNode.prototype.computeRope = function(compute,naibor)
 {
 	var ret=[0,0]
 
 	naibor.forEach(element => {
 		var distanceX = (element.positions[0]-compute.positions[0])
 		var distanceY = (element.positions[1]-compute.positions[1])
-		var distanceAngle=Math.atan2( distanceY, distanceX );
+		var distanceAngle=Math.atan2( distanceY, distanceX )
 		var distance=Math.sqrt(
 			distanceX*distanceX
-			+distanceY*distanceY);
+			+distanceY*distanceY)
 		var distanceNormalised = distance / this.distance
 		var forceIntencity=(Math.atan((distanceNormalised-1)*5)+Math.pow(distanceNormalised-1,3))
 		var forceComponents={
 			x: Math.cos(distanceAngle)*forceIntencity,
 			y: Math.sin(distanceAngle)*forceIntencity
-		};
-		ret[0]+=forceComponents.x;
-		ret[1]+=forceComponents.y;
-	});
-	return ret;
-};
+		}
+		ret[0]+=forceComponents.x
+		ret[1]+=forceComponents.y
+	})
+	return ret
+}
 RNode.prototype.adjustColision = function(compute, naibor)
 {
 	var ret=[0,0]
 	naibor.forEach(element => {
-		if(element==this) return;
+		if(element==this) return
 		var distanceX = (element.positions[0]-compute.positions[0])
 		var distanceY = (element.positions[1]-compute.positions[1])
-		var distanceAngle=Math.atan2( distanceY, distanceX );
+		var distanceAngle=Math.atan2( distanceY, distanceX )
 		var distance=Math.sqrt(
 			distanceX*distanceX
-			+distanceY*distanceY);
+			+distanceY*distanceY)
 
-		if(distance > this.radius + element.radius) return;
+		if(distance > this.radius + element.radius) return
 
 		var distanceNormalised = distance / (this.radius + element.radius)
 		var forceIntencity=(Math.pow(distanceNormalised-1,3))
 		var forceComponents={
 			x: Math.cos(distanceAngle)*forceIntencity,
 			y: Math.sin(distanceAngle)*forceIntencity
-		};
-		ret[0]+=forceComponents.x;
-		ret[1]+=forceComponents.y;
-	});
-	return ret;
-};
+		}
+		ret[0]+=forceComponents.x
+		ret[1]+=forceComponents.y
+	})
+	return ret
+}
 
 RNode.prototype.compute=function()
 {

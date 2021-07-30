@@ -1,5 +1,7 @@
 module.exports = {
 	"env": {
+		"mocha": true,
+		"amd": true,
 		"browser": true,
 		"es6": true
 	},

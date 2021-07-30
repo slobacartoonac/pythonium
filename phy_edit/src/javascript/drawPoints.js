@@ -1,7 +1,7 @@
 function PointsPloter(context, width, height){
-    this.context = context
-    this.width = width
-    this.height = height
+	this.context = context
+	this.width = width
+	this.height = height
 }
 
 PointsPloter.prototype.draw=function(points, view)

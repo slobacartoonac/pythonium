@@ -1,6 +1,6 @@
 
 function Ploter(canvas,width,height){
-	this.canvas=canvas;
+	this.canvas=canvas
 	this.canvas.width = width || 320
 	this.canvas.height = height || 240
 	this.context = this.canvas.getContext('2d')
