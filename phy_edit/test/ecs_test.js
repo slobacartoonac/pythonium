@@ -58,8 +58,41 @@ describe('EntityManager', function() {
 			element.f()
 		})
 		assert.equal(component_array[0].a, 6)
+		manager.asign(new Component(3), entity)
 		manager.remove(component, entity)
-		assert.equal(manager.get(Component, entity).length, 0)
+		assert.equal(manager.get(Component, entity).length, 1)
+	})
+	it('it should add 2 components', function() {
+		function Component(a){
+			this.a = a
+		}
+		function ComponentB(a){
+			this.a = a
+		}
+		var manager = new EntityManager()
+		var entity = manager.create()
+		var comp = new Component(2)
+		manager.asign(comp, entity)
+		manager.asign(new ComponentB(3), entity)
+		assert.equal(manager.get(Component, entity).length, 1)
+		assert.throws(()=>manager.asign(comp, entity))
+	})
+	it('it should add 2 components with Component', function() {
+		function Component(a){
+			this.a = a
+		}
+		function ComponentB(a){
+			this.a = a
+		}
+		var manager = new EntityManager()
+		var entity0 = manager.create()
+		var entity1 = manager.create()
+		var entity2 = manager.create()
+		manager.asign(new Component(2), entity0)
+		manager.asign(new Component(2), entity2)
+		manager.asign(new ComponentB(2), entity2)
+		manager.asign(new ComponentB(2), entity1)
+		assert.equal(manager.getEnities(Component).length, 2)
 	})
 })
 

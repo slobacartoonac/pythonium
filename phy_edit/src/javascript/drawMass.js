@@ -1,3 +1,5 @@
+import { Physics, Transform } from './physics.js'
+
 const squareDistance = (point, nodeB) =>
 {
 	var square=0
@@ -8,14 +10,15 @@ const squareDistance = (point, nodeB) =>
 
 var COLORS= 16*16
 
-function MassPloter(context, width,height){
+function MassPloter(context, width,height, manager){
 	this.context = context
 	this.width = width
 	this.height = height
 	this.img = this.context.createImageData(this.width, this.height)
+	this.manager = manager
 }
 
-MassPloter.prototype.draw = function(points, view){
+MassPloter.prototype.draw = function(view){
 	const {x: centerX, y: centerY, scale} = view
 	const { context, width: canvasWidth, height: canvasHeight }= this
 	const canvasWidthHalf = canvasWidth / 2
@@ -27,6 +30,15 @@ MassPloter.prototype.draw = function(points, view){
 	var startx = (centerX + canvasWidthHalf) % stepX
 	var starty = (centerY + canvasHeightHalf) % stepY
 	var inverseScale = stepY / scale
+	const points = this.manager.getEnities(Physics).map(
+		(elem)=>{
+			var physics = this.manager.get(Physics, elem)[0]
+			var transform = this.manager.get(Transform, elem)[0]
+			return {
+				mass: physics.mass,
+				positions: transform.positions
+			}
+		})
 	for (var x = startx; x <= canvasWidth; x += stepX) {
 		var realX = (x - canvasWidthHalf) / scale + centerX
 		var realY = (starty - canvasHeightHalf) / scale + centerY

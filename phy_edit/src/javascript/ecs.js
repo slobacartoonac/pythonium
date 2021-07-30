@@ -55,7 +55,7 @@ EntityManager.prototype.asign = function(component, e){
 		this._components[e.id] = [component]
 		return
 	}
-	if(entity_components.find(component))
+	if(entity_components.find(comp=>component===comp))
 		throw Error('Component is allready asiged')
 	entity_components.push(component)
 }
@@ -75,9 +75,40 @@ EntityManager.prototype.remove = function(component, e){
 	if(!entity_components){
 		return
 	}
-	this._components[e.id] = entity_components.filter(function(component){
-		return component !== component
+	this._components[e.id] = entity_components.filter(function(compon){
+		return compon !== component
 	})
+}
+
+EntityManager.prototype.getEnities = function(c_type){
+	return Object.values(this._entities).filter(
+		(entity)=>{
+			return this.get(c_type, entity).length
+		}
+	)
+}
+
+EntityManager.prototype.compose = function(e){
+	var entity_components = this._components[e.id]
+	if(!entity_components){
+		return {}
+	}
+	var ret = {}
+	entity_components.forEach(element => {
+		Object.keys(element).forEach(key => {
+			if(ret[key]){
+				if(ret[key+'_list'])
+				{
+					ret[key+'_list'].push(element[key])
+					return
+				}
+				ret[key+'_list'] = [ret[key], element[key]]
+				return
+			}
+			ret[key] = element[key]
+		})
+	})
+	return ret
 }
 
 export { Entity,

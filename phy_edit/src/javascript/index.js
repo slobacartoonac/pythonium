@@ -1,11 +1,13 @@
 import Ploter from './ploter.js'
 import Touch from './touch.js'
 import FPSPloter from './drawFPS.js'
-import PointsPloter from './drawPoints.js'
-import RNode from './ropeNode.js'
-import MassPloter from './drawMass.js'
+//import MassPloter from './drawMass.js'
 import GridPloter from './drawGrid.js'
-
+import { EntityManager } from './ecs.js'
+import { PhysicsEngine, Physics, ShapeCircle, Transform} from './physics.js'
+import { Render, RenderEngine } from './render.js'
+import { ChainEngine, ChainLink } from './chainEngine.js'
+import { ColisionEngine } from './colisionEngine.js'
 
 const canvas = document.getElementById('phy_canvas')
 var draw=new Ploter(canvas, 640,480)
@@ -15,10 +17,17 @@ var position={x: 0, y:0, scale:1}
 window.addEventListener('mousewheel', function(e){
 	position.scale*= e.wheelDelta > 0 ? 1.1 : 0.88
 })
+
 const fps=new FPSPloter(draw.context)
-const points=new PointsPloter(draw.context, 640, 480)
-const mass = new MassPloter(draw.context, 640, 480)
 const grid = new GridPloter(draw.context, 640, 480)
+
+var manager = new EntityManager()
+const points=new RenderEngine(draw.context, 640, 480, manager)
+const chainEngine = new ChainEngine(manager)
+const colisionEngine = new ColisionEngine(manager)
+const physics=new PhysicsEngine(manager, [chainEngine, colisionEngine])
+//const mass = new MassPloter(draw.context, 640, 480, manager)
+
 document.body.appendChild(canvas)
 var touch = new Touch(canvas, 100)
 touch.sub('force', ({delta})=>{
@@ -30,8 +39,20 @@ var all=[]
 var stabilex=0
 var stabiley=200
 var stabileDistance=12
-for(var i =0 ; i < 100; i ++){
-	all.push(new RNode([stabilex,stabiley],[0,0],5,all, i))
+var prevEntity = null
+var entity = null
+for(var i = 0 ; i < 1500; i ++){
+	entity = manager.create()
+	manager.asign(new Transform([stabilex,stabiley]), entity)
+	manager.asign(new Physics([0,0], 5), entity)
+	manager.asign(new ShapeCircle(5), entity)
+	manager.asign(new Render('#aaffbb'), entity)
+	if(prevEntity){
+		manager.asign(new ChainLink(prevEntity, stabileDistance), entity)
+		manager.asign(new ChainLink(entity, stabileDistance), prevEntity)
+	}
+	prevEntity = entity
+	all.push(entity)
 	var prewa=Math.atan2(
 		-1,
 		50*Math.cos(i/4.0)
@@ -40,32 +61,24 @@ for(var i =0 ; i < 100; i ++){
 	stabiley+= Math.sin(prewa)*stabileDistance
 }
 
-var pullNode = new RNode([stabilex,stabiley],[ -0.2, -2],2,[], i)
-pullNode.drag=0
-all.push(pullNode)
-
-
-
+entity = manager.create()
+manager.asign(new Transform([stabilex,stabiley]), entity)
+manager.asign(new Physics([0,-5],5), entity)
+manager.asign(new ShapeCircle(3), entity)
+manager.asign(new Render('#aaffbb'), entity)
+if(prevEntity){
+	manager.asign(new ChainLink(entity,stabileDistance), prevEntity)
+}
+manager.get(Physics, entity)[0].drag = 0
+all.push(entity)
 
 function work(){
 	draw.clear()
-	//mass.draw(all,position)
+	//mass.draw(position)
 	grid.draw(100,100,position)
-	if(pullNode.positions[1]<stabiley-300)
-		pullNode.speeds[1]=0.9
-	points.draw(
-		all.map((elem)=> [elem.positions[0],elem.positions[1],elem.radius,elem.radius>7?'#ff9933':'#aaffbb'])
-		,position
-	)
+	points.draw( position )
 	fps.draw()
-	for(var z=0; z<20; z++){
-		all.forEach(function(e){
-			e.compute()   
-		})
-		all.forEach(function(e){e.move()})
-	}
-
-
+	physics.compute()
 	setTimeout(work,30)
 }
 work()
