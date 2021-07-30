@@ -1,12 +1,13 @@
 import Ploter from './ploter.js'
-import Touch from './touch'
-import FPSPloter from './drawFPS'
+import Touch from './touch.js'
+import FPSPloter from './drawFPS.js'
 import PointsPloter from './drawPoints.js'
 import RNode from './ropeNode.js'
 import MassPloter from './drawMass.js'
 import GridPloter from './drawGrid.js'
 
-const canvas = document.getElementById("phy_canvas");
+
+const canvas = document.getElementById('phy_canvas')
 var draw=new Ploter(canvas, 640,480)
 
 var position={x: 0, y:0, scale:1}
@@ -29,12 +30,12 @@ var all=[]
 var stabilex=0
 var stabiley=200
 var stabileDistance=12
-for(var i =0 ; i < 518; i ++){
+for(var i =0 ; i < 100; i ++){
 	all.push(new RNode([stabilex,stabiley],[0,0],5,all, i))
 	var prewa=Math.atan2(
 		-1,
 		50*Math.cos(i/4.0)
-		);
+	)
 	stabilex+= Math.cos(prewa)*stabileDistance
 	stabiley+= Math.sin(prewa)*stabileDistance
 }

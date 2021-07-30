@@ -25,7 +25,7 @@
     "webpack": "^5.47.1",
     "webpack-cli": "^3.3.10"
   },
-  "type": "commonjs",
+  "type": "module",
   "engines": {
     "node": ">=8.10.0"
   }

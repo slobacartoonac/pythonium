@@ -9,9 +9,9 @@ const squareDistance = (point, nodeB) =>
 var COLORS= 16*16
 
 function MassPloter(context, width,height){
-    this.context = context
-    this.width = width
-    this.height = height
+	this.context = context
+	this.width = width
+	this.height = height
 	this.img = this.context.createImageData(this.width, this.height)
 }
 
