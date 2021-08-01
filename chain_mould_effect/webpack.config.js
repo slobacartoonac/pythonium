@@ -30,5 +30,8 @@ module.exports = {
 				]
 			}
 		]
+	},
+	externals: {
+		'my-touch': path.resolve(__dirname, '../lib/touch.js')
 	}
 }

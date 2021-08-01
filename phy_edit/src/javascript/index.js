@@ -1,5 +1,5 @@
 import Ploter from './ploter.js'
-import Touch from './touch.js'
+import Touch from 'my-touch'
 import FPSPloter from './drawFPS.js'
 //import MassPloter from './drawMass.js'
 import GridPloter from './drawGrid.js'
