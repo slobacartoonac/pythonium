@@ -67,6 +67,13 @@ for(var i = 0 ; i < 250; i ++){
 }
 
 function work(){
+	var numb = parseInt(toolokInput.value)
+	if(!isNaN(numb)){
+		var toLookEntity=all[numb%all.length]
+		var toLookTransform = manager.get(Transform, toLookEntity)[0]
+		position.x=toLookTransform.positions[0]
+		position.y=toLookTransform.positions[1]
+	}
 	draw.clear()
 	if(drawMass.checked)
 		mass.draw(position)
@@ -76,13 +83,16 @@ function work(){
 	if(drawFPS.checked)
 		fps.draw()
 	physics.compute()
-	all=all.filter(function(e){return manager.alive(e);})
-	var numb = parseInt(toolokInput.value)
-	if(!isNaN(numb)){
-		var toLookEntity=all[numb%all.length]
-		var toLookTransform = manager.get(Transform, toLookEntity)[0]
-		position.x=toLookTransform.positions[0]
-		position.y=toLookTransform.positions[1]
+
+	all=all.filter(function(e, index){
+		var alive =  manager.alive(e);
+		if(!alive && !isNaN(numb) && numb >= index){
+			toolokInput.value = numb - 1;
+		}
+		return alive
+	})
+	if(numb >= all.length){
+		toolokInput.value = all.length - 1
 	}
 	setTimeout(work,30)
 }
