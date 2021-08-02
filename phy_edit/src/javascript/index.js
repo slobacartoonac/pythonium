@@ -1,14 +1,18 @@
-import Ploter from './ploter.js'
 import Touch from 'my_lib/touch.js'
 import { EntityManager } from 'my_lib/ecs.js'
-import FPSPloter from './drawFPS.js'
-//import MassPloter from './drawMass.js'
-import GridPloter from './drawGrid.js'
 
-import { PhysicsEngine, Physics, ShapeCircle, Transform} from './physics.js'
-import { Render, RenderEngine } from './render.js'
-import { ChainEngine, ChainLink } from './chainEngine.js'
-import { ColisionEngine } from './colisionEngine.js'
+import { PhysicsEngine, Physics} from 'my_lib/physics/physics.js'
+import { ShapeCircle} from 'my_lib/shapes/circle.js'
+
+import { Transform } from 'my_lib/physics/transform.js'
+import { ChainEngine, ChainLink } from 'my_lib/physics/chainEngine.js'
+import { ColisionEngine } from 'my_lib/physics/colisionEngine.js'
+
+import Ploter from 'my_lib/drawers/ploter.js'
+import FPSPloter from 'my_lib/drawers/drawFPS.js'
+import MassPloter from 'my_lib/drawers/drawMass.js'
+import GridPloter from 'my_lib/drawers/drawGrid.js'
+import { Renderer, RenderEngine } from 'my_lib/drawers/render.js'
 
 const canvas = document.getElementById('phy_canvas')
 var draw=new Ploter(canvas, 640,480)
@@ -27,7 +31,7 @@ const points=new RenderEngine(draw.context, 640, 480, manager)
 const chainEngine = new ChainEngine(manager)
 const colisionEngine = new ColisionEngine(manager)
 const physics=new PhysicsEngine(manager, [chainEngine, colisionEngine])
-//const mass = new MassPloter(draw.context, 640, 480, manager)
+const mass = new MassPloter(draw.context, 640, 480, manager)
 
 document.body.appendChild(canvas)
 var touch = new Touch(canvas, 100)
@@ -47,7 +51,7 @@ for(var i = 0 ; i < 2500; i ++){
 	manager.asign(new Transform([stabilex,stabiley]), entity)
 	manager.asign(new Physics([0,0], 5), entity)
 	manager.asign(new ShapeCircle(5), entity)
-	manager.asign(new Render('#aaffbb'), entity)
+	manager.asign(new Renderer('#aaffbb'), entity)
 	if(prevEntity){
 		manager.asign(new ChainLink(prevEntity, stabileDistance), entity)
 		manager.asign(new ChainLink(entity, stabileDistance), prevEntity)
@@ -66,7 +70,7 @@ entity = manager.create()
 manager.asign(new Transform([stabilex,stabiley]), entity)
 manager.asign(new Physics([0,-5],5), entity)
 manager.asign(new ShapeCircle(3), entity)
-manager.asign(new Render('#aaffbb'), entity)
+manager.asign(new Renderer('#aaffbb'), entity)
 if(prevEntity){
 	manager.asign(new ChainLink(entity,stabileDistance), prevEntity)
 }

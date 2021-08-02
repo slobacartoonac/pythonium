@@ -64,7 +64,6 @@ for(var i = 0 ; i < 396; i ++){
 	stabilex+= Math.cos(prewa)*stabileDistance
 	stabiley+= Math.sin(prewa)*stabileDistance
 }
-
 entity = manager.create()
 manager.asign(new Transform([stabilex,stabiley]), entity)
 manager.asign(new Physics([0,-50],5), entity)
