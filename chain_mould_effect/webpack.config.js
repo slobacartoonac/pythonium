@@ -32,6 +32,17 @@ module.exports = {
 		]
 	},
 	externals: {
-		'my-touch': path.resolve(__dirname, '../lib/touch.js')
+		test: /\.js?$/,
+		include: [
+		  path.resolve(__dirname),
+		  path.resolve(__dirname, "../lib")
+		],
+		exclude: /node_modules/,
+		loader: "babel-loader"
+	},
+	resolve: {
+		alias: {
+		  my_lib: path.resolve(__dirname, "../lib"),
+		},
 	}
 }

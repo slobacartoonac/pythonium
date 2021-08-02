@@ -1,9 +1,10 @@
 import Ploter from './ploter.js'
-import Touch from 'my-touch'
+import Touch from 'my_lib/touch.js'
+import { EntityManager } from 'my_lib/ecs.js'
 import FPSPloter from './drawFPS.js'
 //import MassPloter from './drawMass.js'
 import GridPloter from './drawGrid.js'
-import { EntityManager } from './ecs.js'
+
 import { PhysicsEngine, Physics, ShapeCircle, Transform} from './physics.js'
 import { Render, RenderEngine } from './render.js'
 import { ChainEngine, ChainLink } from './chainEngine.js'
