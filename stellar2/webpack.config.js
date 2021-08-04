@@ -30,5 +30,19 @@ module.exports = {
 				]
 			}
 		]
+	},
+	externals: {
+		test: /\.js?$/,
+		include: [
+		  path.resolve(__dirname),
+		  path.resolve(__dirname, '../lib')
+		],
+		exclude: /node_modules/,
+		loader: 'babel-loader'
+	},
+	resolve: {
+		alias: {
+		  my_lib: path.resolve(__dirname, '../lib'),
+		},
 	}
 }

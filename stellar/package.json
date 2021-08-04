@@ -1,7 +1,7 @@
 {
-  "name": "chain_mould_effect",
+  "name": "stellar",
   "version": "1.0.0",
-  "description": "\"Simulation of CHAIN MOULD EFFECT\"",
+  "description": "\"Simulation of star creation\"",
   "main": "index.js",
   "scripts": {
     "test": "mocha --require @babel/register",
