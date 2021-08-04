@@ -21,6 +21,7 @@ const toolokInput = document.getElementById('tolook_value')
 const drawMass = document.getElementById('draw_mass')
 const drawGrid = document.getElementById('draw_grid')
 const drawFPS = document.getElementById('draw_fps')
+const fullSpeed = document.getElementById('full_speed')
 var draw=new Ploter(canvas, 640,480)
 
 var position={x: 0, y:0, scale:1}
@@ -48,19 +49,19 @@ touch.sub('force', ({delta})=>{
 var all=[]
 
 var entity = null
-for(var i = 0 ; i < 250; i ++){
+for(var i = 0 ; i < 450; i ++){
 	var angle=Math.random()*2*Math.PI;
 	var radius = 50+Math.random()*600;
-	var x=Math.sin(angle)*radius;
-	var y=Math.cos(angle)*radius;
-	var tan=Math.atan2(x, y)+Math.PI/2;
-	var speedX= 2*Math.sin(tan)+Math.random()*4-2
-	var speedY=	2*Math.cos(tan)+Math.random()*4-2
+	var x= Math.sin(angle)*radius;
+	var y= Math.cos(angle)*radius;
+	var tan= Math.atan2(x, y)+Math.PI/2;
+	var speedX= Math.sin(tan)/2 + Math.random()*2-1
+	var speedY=	Math.cos(tan)/2 + Math.random()*2-1
 	var radius= 1 + Math.random()*3
 
 	entity = manager.create()
 	manager.asign(new Transform([x, y]), entity)
-	manager.asign(new Physics([speedX,speedY], 1+5*Math.abs(3-radius)), entity)
+	manager.asign(new Physics([speedX,speedY], 2+5*Math.abs(3-radius), 0), entity)
 	manager.asign(new ShapeCircle(radius), entity)
 	manager.asign(new Renderer('#aaffbb'), entity)
 	all.push(entity)
@@ -94,6 +95,6 @@ function work(){
 	if(numb >= all.length){
 		toolokInput.value = all.length - 1
 	}
-	setTimeout(work,30)
+	setTimeout(work,fullSpeed.checked ? 0 : 15)
 }
 work()

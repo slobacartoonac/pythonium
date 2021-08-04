@@ -7,6 +7,7 @@
     "test": "mocha --require @babel/register",
     "build": "webpack --config webpack.config.js",
     "watch": "nodemon --exec npm run build --watch ./src",
+    "serve": "http-server",
     "lint": "eslint"
   },
   "author": "Slobodan Zikvoivc (slobacartoonac@gmail.com)",
