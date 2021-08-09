@@ -1,37 +1,94 @@
 import { Gravity } from "gravity_calc";
-import drawFPS from './drawFPS'
-import SNode from './sunNode'
-import Ploter from './ploter'
-import Touch from './touch'
+import Touch from 'my_lib/touch.js'
+import { EntityManager } from 'my_lib/ecs.js'
 
+import { PhysicsEngine, Physics} from 'my_lib/physics/physics.js'
+import { ShapeCircle} from 'my_lib/shapes/circle.js'
+import { PlasticColisionEngine } from 'my_lib/physics/plasticColisionEngine'
+import { GravityEngine } from 'my_lib/physics/gravityEngine'
+import { GravityColorEngine } from 'my_lib/drawers/gravityColorEngine.js'
 
+import { Transform } from 'my_lib/physics/transform.js'
 
+import Ploter from 'my_lib/drawers/ploter.js'
+import FPSPloter from 'my_lib/drawers/drawFPS.js'
+import GridPloter from 'my_lib/drawers/drawGrid.js'
+import { Renderer, RenderEngine } from 'my_lib/drawers/render.js'
 
-var position={x: 0, y:0, scale:1}
+const canvas = document.getElementById('phy_canvas')
+const toolokInput = document.getElementById('tolook_value')
+const drawMass = document.getElementById('draw_mass')
+const drawGrid = document.getElementById('draw_grid')
+const drawFPS = document.getElementById('draw_fps')
+const fullSpeed = document.getElementById('full_speed')
+var width = 640
+var height = 480
+var draw=new Ploter(canvas, width,height)
+var position={x: 0, y:0, scale: 0.2}
+
+window.addEventListener('mousewheel', function(e){
+	position.scale*= e.wheelDelta > 0 ? 1.1 : 0.88
+})
+
+const fps=new FPSPloter(draw.context)
+const grid = new GridPloter(draw.context, width, height)
+
+var manager = new EntityManager()
+const points=new RenderEngine(draw.context, width, height, manager)
+const gravityEngine = new GravityEngine(manager)
+const colisionEngine = new PlasticColisionEngine(manager)
+const gravityColorEngine = new GravityColorEngine(manager)
+const physics=new PhysicsEngine(manager, [gravityEngine, colisionEngine, gravityColorEngine])
+
+const gravity = Gravity.new(width,height);
+
 var positionArray = new Float32Array([position.x, position.y, position.scale])
 window.addEventListener('mousewheel', function(e){
 	position.scale*= e.wheelDelta > 0 ? 1.1 : 0.88
 	positionArray = new Float32Array([position.x, position.y, position.scale])
 })
+var touch = new Touch(canvas, 100)
+touch.sub('force', ({delta})=>{
+	position = {...position, x: position.x - delta.x / position.scale,
+		y: position.y - delta.y / position.scale}
+	positionArray = new Float32Array([position.x, position.y, position.scale])
+})
+
+var entity = null
 
 var all=[]
-all.push(new SNode([0,0],[0,0],65,all, "Sun"))
-all.push(new SNode([255,0],[0,8],3,all, "Mercury"))
-all.push(new SNode([300,0],[0,10],4,all, "Venus"))
-all.push(new SNode([450,0],[0,10],7,all, "Earth"))
-all.push(new SNode([600,0],[0,10],4,all, "Mars"))
-all.push(new SNode([1400,0],[0,10],25,all, "Jupiter"))
-all.push(new SNode([1440,0],[0,12],2,all, "Europa"))
-all.push(new SNode([1450,0],[0,12],2,all, "Europa"))
-all.push(new SNode([2800,0],[0,10],5,all, "Saturn"))
-const generateItem= (size)=>{
+
+function calculateMass(radius) {
+	var massVolume = 0.1
+	return Math.pow(radius,3)* Math.PI * massVolume
+}
+
+function createSnode(positions, speeds, radius){
+	entity = manager.create()
+	manager.asign(new Transform(positions), entity)
+	manager.asign(new Physics(speeds, calculateMass(radius), 0), entity)
+	manager.asign(new ShapeCircle(radius), entity)
+	manager.asign(new Renderer('#aaffbb'), entity)
+	return entity
+}
+
+all.push(createSnode([0,0],[0,0],65,all, 'Sun'))
+all.push(createSnode([255,0],[0,5],3,all, 'Mercury'))
+all.push(createSnode([300,0],[0,5],4,all, 'Venus'))
+all.push(createSnode([450,0],[0,4],7,all, 'Earth'))
+all.push(createSnode([600,0],[0,4],4,all, 'Mars'))
+all.push(createSnode([1400,0],[0,2.5],25,all, 'Jupiter'))
+all.push(createSnode([1440,0],[0,6],2,all, 'Europa'))
+all.push(createSnode([1450,0],[0,6],2,all, 'Europa'))
+all.push(createSnode([2800,0],[0,2.5],5,all, 'Saturn'))
+const generateItem = (size)=>{
 	var angle=Math.random()*2*Math.PI
 	var radius = 200 + Math.random()*2000
 	var x=Math.sin(angle)*radius
 	var y=Math.cos(angle)*radius
 	var tan=Math.atan2(x, y)-Math.PI/2
 
-	var el=new SNode(
+	var el=createSnode(
 		[x,y],
 		[(10*Math.sin(tan)+Math.random()*14-7),
 			(10*Math.cos(tan)+Math.random()*14-7)],
@@ -43,25 +100,7 @@ setInterval(()=>{
 	all.length<30 && generateItem()
 }, 200)
 
-// Construct the universe, and get its width and height.
-const canvas = document.getElementById("stellar3");
-const [width, height] = [640,480]
-const gravity = Gravity.new(width,height);
-
-// Give the canvas room for all of our cells and a 1px border
-// around each of them.
-
-var touch = new Touch(canvas, 100)
-touch.sub('force', ({delta})=>{
-	position = {...position, x: position.x - delta.x / position.scale,
-		y: position.y - delta.y / position.scale}
-	positionArray = new Float32Array([position.x, position.y, position.scale])
-})
-var draw=new Ploter(canvas, width, height)
-
-const ctx = draw.context;
-const fps=drawFPS(ctx)
-const img= ctx.createImageData(width, height)
+const img= draw.context.createImageData(width, height)
 
 var planetsArray = new Float32Array(all.length*3);
 
@@ -71,9 +110,11 @@ const drawGravity2 = () => {
 		planetsArray = new Float32Array(all.length*3);
 	var bufferIndex=0;
 	all.forEach((el)=> {
-		planetsArray[bufferIndex]=el.positions[0]
-		planetsArray[bufferIndex+1]=el.positions[1]
-		planetsArray[bufferIndex+2]=el.mass
+		var transform = manager.get(Transform, el)[0]
+		var physic = manager.get(Physics, el)[0]
+		planetsArray[bufferIndex]=transform.positions[0]
+		planetsArray[bufferIndex+1]=transform.positions[1]
+		planetsArray[bufferIndex+2]=physic.mass
 		bufferIndex+=3
 	})
 	gravity.draw_planets(
@@ -82,34 +123,38 @@ const drawGravity2 = () => {
 		planetsDataLength,
 		positionArray
 	);
-  ctx.putImageData(img, 0, 0);
+	draw.context.putImageData(img, 0, 0);
 }
 var i=0;
 
-const renderLoop = () => {
-  drawGravity2();
-  draw.points(
-	all.map((elem)=> [elem.positions[0],
-	elem.positions[1],
-	elem.radius,elem.radius>30
-	?'#aa9933'
-	:'#B45F04'])
-	,position
-	)
-  fps();
-  all.forEach(function(e){
-		e.compute()   
-	})
-	const allLength=all.length
-	for(i=0;i<allLength;i++)
-	{
-		const first=all.shift()
-		if(!first.invalid) all.push(first)
+function work(){
+	var numb = parseInt(toolokInput.value)
+	if(!isNaN(numb)){
+		var toLookEntity=all[numb%all.length]
+		var toLookTransform = manager.get(Transform, toLookEntity)[0]
+		position.x=toLookTransform.positions[0]
+		position.y=toLookTransform.positions[1]
 	}
-	all.forEach(function(e){
-		e.move()
-	})
+	draw.clear()
+	if(drawMass.checked)
+		drawGravity2()
+	if(drawGrid.checked)
+		grid.draw(100,100,position)
+	points.draw( position )
+	if(drawFPS.checked)
+		fps.draw()
+	physics.compute()
 
-  requestAnimationFrame(renderLoop);
-};
-requestAnimationFrame(renderLoop);
+	all=all.filter(function(e, index){
+		var alive =  manager.alive(e)
+		if(!alive && !isNaN(numb) && numb >= index){
+			toolokInput.value = numb - 1
+		}
+		return alive
+	})
+	if(numb >= all.length){
+		toolokInput.value = all.length - 1
+	}
+	setTimeout(work, fullSpeed.checked ? 0: 15)
+}
+work()
