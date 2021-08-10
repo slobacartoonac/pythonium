@@ -45,13 +45,11 @@ const gravity = Gravity.new(width,height);
 var positionArray = new Float32Array([position.x, position.y, position.scale])
 window.addEventListener('mousewheel', function(e){
 	position.scale*= e.wheelDelta > 0 ? 1.1 : 0.88
-	positionArray = new Float32Array([position.x, position.y, position.scale])
 })
 var touch = new Touch(canvas, 100)
 touch.sub('force', ({delta})=>{
 	position = {...position, x: position.x - delta.x / position.scale,
 		y: position.y - delta.y / position.scale}
-	positionArray = new Float32Array([position.x, position.y, position.scale])
 })
 
 var entity = null
@@ -117,6 +115,9 @@ const drawGravity2 = () => {
 		planetsArray[bufferIndex+2]=physic.mass
 		bufferIndex+=3
 	})
+	positionArray[0] = position.x
+	positionArray[1] = position.y
+	positionArray[2] = position.scale
 	gravity.draw_planets(
 		img.data,
 		planetsArray,
@@ -155,6 +156,6 @@ function work(){
 	if(numb >= all.length){
 		toolokInput.value = all.length - 1
 	}
-	setTimeout(work, fullSpeed.checked ? 0: 15)
+	requestAnimationFrame(work)
 }
-work()
+requestAnimationFrame(work)
