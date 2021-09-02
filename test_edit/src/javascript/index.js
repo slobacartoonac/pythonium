@@ -10,7 +10,10 @@ import FPSPloter from 'my_lib/drawers/drawFPS.js'
 import GridPloter from 'my_lib/drawers/drawGrid.js'
 import { Renderer, RenderEngine } from 'my_lib/drawers/render.js'
 
+import Select from './select.js'
+
 const canvas = document.getElementById('phy_canvas')
+const selectionTool = document.getElementById('selection_tool')
 var draw=new Ploter(canvas, 640,480)
 
 var position={x: 0, y:0, scale:1}
@@ -26,25 +29,80 @@ var manager = new EntityManager()
 const points=new RenderEngine(draw.context, 640, 480, manager)
 
 document.body.appendChild(canvas)
-var touch = new Touch(canvas, 100)
-touch.sub('force', ({delta})=>{
-	position = {...position, x: position.x - delta.x / position.scale,
-		y: position.y - delta.y / position.scale}
+
+var selection = new Select()
+
+var touch = new Touch(canvas, 5)
+var selectStartPosition = null
+var selectPosition = null
+touch.sub('force', ({delta,
+	startPosition,
+	position: mousePositon,
+	click
+	})=>{
+	if(!selectionTool.checked){
+		position = {...position, x: position.x - delta.x / position.scale,
+			y: position.y - delta.y / position.scale}
+		return
+	}
+	// select tool selection
+	selectStartPosition = startPosition
+	selectPosition = mousePositon
 })
+
+touch.sub('stop',()=>{
+	if(selectStartPosition){
+
+		var startX = selectStartPosition.x < selectPosition.x ? selectStartPosition.x : selectPosition.x 
+		var startY = selectStartPosition.y < selectPosition.y ? selectStartPosition.y : selectPosition.y 
+		var endX = selectStartPosition.x > selectPosition.x ? selectStartPosition.x : selectPosition.x 
+		var endY = selectStartPosition.y > selectPosition.y ? selectStartPosition.y : selectPosition.y 
+
+		var pointStart = draw.screenToWorld(position, [startX, startY]);
+		var pointEnd = draw.screenToWorld(position, [endX, endY]);
+		const points = manager.getEnities(Transform).map(
+			(elem)=>{
+				var transform = manager.get(Transform, elem)[0]
+				return transform.positions
+			}
+		)
+		console.log(selection.areaSelect(pointStart, pointEnd, points))
+
+		selectPosition = null
+		selectStartPosition = null
+	}
+})
+
+touch.sub('click',({x, y})=>{
+	var point = draw.screenToWorld(position, [x, y]);
+	const points = manager.getEnities(Transform).map(
+		(elem)=>{
+			var transform = manager.get(Transform, elem)[0]
+			return transform.positions
+		}
+	)
+	console.log(selection.pointSelect(point, points, 10))
+})
+
 
 var all=[]
 var entity = null
+
+function createObject(x, y, radius){
+	entity = manager.create()
+	manager.asign(new Transform([x, y]), entity)
+	manager.asign(new ShapeCircle(radius), entity)
+	manager.asign(new Renderer('#aaffbb'), entity)
+	all.push(entity)
+}
+
 for(var i = 0 ; i < 10; i ++){
 	var angle=Math.random()*2*Math.PI;
 	var radius = 30+Math.random()*200;
 	var x= Math.sin(angle)*radius;
 	var y= Math.cos(angle)*radius;
 	var radius= 5
-	entity = manager.create()
-	manager.asign(new Transform([x, y]), entity)
-	manager.asign(new ShapeCircle(radius), entity)
-	manager.asign(new Renderer('#aaffbb'), entity)
-	all.push(entity)
+	createObject(x, y, radius)
 }
 
 function work(){
