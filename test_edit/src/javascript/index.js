@@ -11,6 +11,7 @@ import GridPloter from 'my_lib/drawers/drawGrid.js'
 import { Renderer, RenderEngine } from 'my_lib/drawers/render.js'
 
 import Select from './select.js'
+import { Selectable, SelectableRenderEngine } from './select_ecs.js'
 
 const canvas = document.getElementById('phy_canvas')
 const selectionTool = document.getElementById('selection_tool')
@@ -26,11 +27,12 @@ const fps=new FPSPloter(draw.context)
 const grid = new GridPloter(draw.context, 640, 480)
 
 var manager = new EntityManager()
-const points=new RenderEngine(draw.context, 640, 480, manager)
-
+const points= new RenderEngine(draw.context, 640, 480, manager)
+var selection = new Select()
+const selectedPoints = new SelectableRenderEngine(draw.context, 640, 480, manager, selection)
 document.body.appendChild(canvas)
 
-var selection = new Select()
+
 
 var touch = new Touch(canvas, 5)
 var selectStartPosition = null
@@ -50,6 +52,16 @@ touch.sub('force', ({delta,
 	selectPosition = mousePositon
 })
 
+function markSelection(selection){
+	console.log(selection)
+	selection.forEach((elem, index) => {
+		var entity = elem[2]
+		var selectable = manager.get(Selectable, entity)[0]
+		selectable.isSelected = true
+		selectable.index = index;
+	});
+}
+
 touch.sub('stop',()=>{
 	if(selectStartPosition){
 
@@ -60,13 +72,16 @@ touch.sub('stop',()=>{
 
 		var pointStart = draw.screenToWorld(position, [startX, startY]);
 		var pointEnd = draw.screenToWorld(position, [endX, endY]);
-		const points = manager.getEnities(Transform).map(
+		const points = manager.getEnities(Selectable).map(
 			(elem)=>{
 				var transform = manager.get(Transform, elem)[0]
-				return transform.positions
+				var selectable = manager.get(Selectable, elem)[0]
+				selectable.isSelected = false
+				selectable.index = 0;
+				return [...transform.positions, elem]
 			}
 		)
-		console.log(selection.areaSelect(pointStart, pointEnd, points))
+		markSelection(selection.areaSelect(pointStart, pointEnd, points))
 
 		selectPosition = null
 		selectStartPosition = null
@@ -75,13 +90,16 @@ touch.sub('stop',()=>{
 
 touch.sub('click',({x, y})=>{
 	var point = draw.screenToWorld(position, [x, y]);
-	const points = manager.getEnities(Transform).map(
+	const points = manager.getEnities(Selectable).map(
 		(elem)=>{
 			var transform = manager.get(Transform, elem)[0]
-			return transform.positions
+			var selectable = manager.get(Selectable, elem)[0]
+			selectable.isSelected = false
+			selectable.index = 0;
+			return [...transform.positions, elem]
 		}
 	)
-	console.log(selection.pointSelect(point, points, 10))
+	markSelection(selection.pointSelect(point, points, 10))
 })
 
 
@@ -93,6 +111,7 @@ function createObject(x, y, radius){
 	manager.asign(new Transform([x, y]), entity)
 	manager.asign(new ShapeCircle(radius), entity)
 	manager.asign(new Renderer('#aaffbb'), entity)
+	manager.asign(new Selectable('#aaffbb'), entity)
 	all.push(entity)
 }
 
@@ -109,6 +128,7 @@ function work(){
 	draw.clear()
 	grid.draw(100,100,position)
 	points.draw( position )
+	selectedPoints.draw( position )
 	fps.draw()
 	setTimeout(work,0)
 }

@@ -1,7 +1,7 @@
 // written by Slobodan Zivkovic slobacartoonac@gmail.com
-
 function Select() {
     this.selection = []
+    this.mean = null
 }
 
 Select.prototype.findGeoMean = function() {
@@ -17,6 +17,19 @@ Select.prototype.findGeoMean = function() {
     return [geomeanX, geomeanY]
 }
 
+Select.prototype.findMean = function() {
+    var sumX = 0;
+    var sumY = 0;
+    var len = this.selection.length;
+    this.selection.forEach(point => {
+        sumX += point[0];
+        sumY += point[1];
+    })
+    var  meanX = sumX / len
+    var  meanY = sumY / len
+    return [meanX, meanY]
+}
+
 Select.prototype.orderValue = function(geomean, point, shiftAngle){
     shiftAngle = shiftAngle ? shiftAngle : 0
     var tempAngle = Math.atan2( geomean[1]-point[1], geomean[0] - point[0]) - shiftAngle
@@ -28,10 +41,11 @@ Select.prototype.orderValue = function(geomean, point, shiftAngle){
 }
 
 Select.prototype.sort = function() {
-    var geomean = this.findGeoMean();
-    var shiftAngle = Math.atan2( geomean[1]-this.selection[0][1], geomean[0] - this.selection[0][0])
+    var mean = this.findMean();
+    this.mean = mean
+    var shiftAngle = Math.atan2( mean[1]-this.selection[0][1], mean[0] - this.selection[0][0])
     // make array of elements with order values
-    var tempArray = this.selection.map(point => [this.orderValue(geomean, point, shiftAngle), point])
+    var tempArray = this.selection.map(point => [this.orderValue(mean, point, shiftAngle), point])
     tempArray.sort((a, b) => a[0] - b[0])
     //extract ordered original array elements
     this.selection = tempArray.map(el => el[1])
@@ -40,9 +54,16 @@ Select.prototype.sort = function() {
 Select.prototype.proccesSelection = function(selectedPoints){
     if(!selectedPoints.length){
         this.selection = [] //selected empty space, deselect evrything
+        this.mean = null
         return this.selection
     }
-    this.selection = [...new Set(this.selection.concat(selectedPoints))] // remove duplicates
+    // remove duplicates
+
+    this.selection = this.selection.concat(selectedPoints).filter((thing, index, self) =>
+        index === self.findIndex((t) => (
+            t[0] === thing[0] && t[1] === thing[1]
+        ))
+        )
     this.sort();
     return this.selection
 }
@@ -70,4 +91,4 @@ Select.prototype.areaSelect = function(pointStart, pointEnd, pointSpace){
     return this.proccesSelection(selectedPoints)
 }
 
-export default Select
+export default Select 
