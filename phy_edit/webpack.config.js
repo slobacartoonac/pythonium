@@ -19,7 +19,8 @@ module.exports = {
 	// Depending on mode Webpack will apply different things
 	// on final bundle. For now we don't need production's JavaScript 
 	// minifying and other thing so let's set mode to development
-	mode: 'development',
+	mode: "development",
+	watch: true,
 	module: {
 		rules: [
 			{
@@ -44,5 +45,12 @@ module.exports = {
 		alias: {
 		  my_lib: path.resolve(__dirname, '../lib'),
 		},
-	}
+	},
+	devServer: {
+		static: {
+		  directory: __dirname,
+		},
+		compress: true,
+		port: 8080,
+	  },
 }
