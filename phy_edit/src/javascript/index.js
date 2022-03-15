@@ -38,18 +38,22 @@ const selectedPoints = new SelectableRenderEngine(draw.context, 640, 480, manage
 const chainEngine = new ChainEngine(manager)
 const colisionEngine = new ColisionEngine(manager)
 const physics=new PhysicsEngine(manager, [chainEngine, colisionEngine])
-const mass = new MassPloter(draw.context, 640, 480, manager)
+const masa = new MassPloter(draw.context, 640, 480, manager)
 
 var touch = new Touch(canvas, 100)
 touch.sub('force', ({
 	delta,
-	startPosition,
-	position: mousePositon
-	})=>{
+	startPosition: selectStartPosition,
+	position: selectPosition,
+})=>{
 	if(!selectionTool.checked){
 		position = {...position, x: position.x - delta.x / position.scale,
 			y: position.y - delta.y / position.scale}
 		return
+	} else {
+		var pointStart = draw.screenToWorld(position, Object.values(selectStartPosition))
+		var pointEnd = draw.screenToWorld(position, Object.values(selectPosition))
+		selection.setArea(pointStart, pointEnd)
 	}
 })
 
@@ -57,26 +61,26 @@ function markSelection(selection, objects){
 	selection.forEach((elem, index) => {
 		var { selectable } = objects.find(({transform})=> transform.positions == elem)
 		selectable.isSelected = true
-		selectable.index = index;
-	});
+		selectable.index = index
+	})
 }
 
 touch.sub('stop',(
 	{startPosition: selectStartPosition,
-	position: selectPosition,
-	distance,
-	click
+		position: selectPosition,
+		distance,
+		click
 	})=>{
 	if(selectionTool.checked && !click){
 
-		var pointStart = draw.screenToWorld(position, Object.values(selectStartPosition));
-		var pointEnd = draw.screenToWorld(position, Object.values(selectPosition));
+		var pointStart = draw.screenToWorld(position, Object.values(selectStartPosition))
+		var pointEnd = draw.screenToWorld(position, Object.values(selectPosition))
 		const pointsSelectable = manager.getEnities(Selectable).map(
 			(elem)=>{
 				var transform = manager.get(Transform, elem)[0]
 				var selectable = manager.get(Selectable, elem)[0]
 				selectable.isSelected = false
-				selectable.index = 0;
+				selectable.index = 0
 				return {transform, selectable}
 			}
 		)
@@ -86,13 +90,13 @@ touch.sub('stop',(
 })
 
 touch.sub('click',({x, y})=>{
-	var point = draw.screenToWorld(position, [x, y]);
+	var point = draw.screenToWorld(position, [x, y])
 	const pointsSelectable = manager.getEnities(Selectable).map(
 		(elem)=>{
 			var transform = manager.get(Transform, elem)[0]
 			var selectable = manager.get(Selectable, elem)[0]
 			selectable.isSelected = false
-			selectable.index = 0;
+			selectable.index = 0
 			return {transform, selectable}
 		}
 	)
@@ -109,7 +113,7 @@ var entity = null
 for(var i = 0 ; i < 500; i ++){
 	entity = manager.create()
 	manager.asign(new Transform([stabilex,stabiley]), entity)
-	manager.asign(new Physics([0,0], 5), entity)
+	manager.asign(new Physics([0,0], 5, 0), entity)
 	manager.asign(new ShapeCircle(5), entity)
 	manager.asign(new Renderer('#aaffbb'), entity)
 	manager.asign(new Selectable('#aaffbb'), entity)
@@ -129,19 +133,18 @@ for(var i = 0 ; i < 500; i ++){
 
 entity = manager.create()
 manager.asign(new Transform([stabilex,stabiley]), entity)
-manager.asign(new Physics([0,-5],5), entity)
+manager.asign(new Physics([0,-5], 5, 0), entity)
 manager.asign(new ShapeCircle(3), entity)
 manager.asign(new Renderer('#aaffbb'), entity)
 manager.asign(new Selectable('#aaffbb'), entity)
 if(prevEntity){
 	manager.asign(new ChainLink(entity,stabileDistance), prevEntity)
 }
-manager.get(Physics, entity)[0].drag = 0
 all.push(entity)
 
 function work(){
 	draw.clear()
-	//mass.draw(position)
+	masa.draw(position)
 	grid.draw(100,100,position)
 	points.draw( position )
 	selectedPoints.draw( position )

@@ -1,31 +1,31 @@
-module.exports = {
-	"env": {
-		"mocha": true,
-		"amd": true,
-		"browser": true,
-		"es6": true
+export default {
+	'env': {
+		'mocha': true,
+		'amd': true,
+		'browser': true,
+		'es6': true
 	},
-	"extends": "eslint:recommended",
-	"globals": {
-		"Atomics": "readonly",
-		"SharedArrayBuffer": "readonly"
+	'extends': 'eslint:recommended',
+	'globals': {
+		'Atomics': 'readonly',
+		'SharedArrayBuffer': 'readonly'
 	},
-	"parserOptions": {
-		"ecmaVersion": 2018,
-		"sourceType": "module"
+	'parserOptions': {
+		'ecmaVersion': 2018,
+		'sourceType': 'module'
 	},
-	"rules": {
-		"indent": [
-			"error",
-			"tab"
+	'rules': {
+		'indent': [
+			'error',
+			'tab'
 		],
-		"quotes": [
-			"error",
-			"single"
+		'quotes': [
+			'error',
+			'single'
 		],
-		"semi": [
-			"error",
-			"never"
+		'semi': [
+			'error',
+			'never'
 		]
 	}
 }
