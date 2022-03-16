@@ -144,7 +144,7 @@ all.push(entity)
 
 function work(){
 	draw.clear()
-	masa.draw(position)
+	//masa.draw(position)
 	grid.draw(100,100,position)
 	points.draw( position )
 	selectedPoints.draw( position )

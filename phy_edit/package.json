@@ -7,7 +7,7 @@
   "scripts": {
     "test": "mocha --require @babel/register",
     "build": "webpack",
-    "watch": "nodemon --exec npm run build --watch ./src",
+    "watch": " http-server & nodemon --exec npm run build --watch ./src --watch ../lib",
     "start": "webpack serve",
     "lint": "eslint"
   },
