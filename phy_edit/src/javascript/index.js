@@ -14,16 +14,19 @@ var scene=new Scene(draw);
 var input=new Input(draw);
 var selectionTool = {checked: false}
 
-function adjustWindowSize(){
-	canvas.width  = window.innerWidth - 10;
-	canvas.height = window.innerHeight - 10;
-}
-adjustWindowSize();
+
 
 window.addEventListener('resize', adjustWindowSize);
 
 var position={x: 0, y:0, scale:1}
 var input_position = {x: 0,y: 0, scale: 1}
+
+function adjustWindowSize(){
+	canvas.width  = window.innerWidth - 10;
+	canvas.height = window.innerHeight - 10;
+	input_position = {x: canvas.width / 2,y: canvas.height / 2, scale: 1}
+}
+adjustWindowSize();
 
 window.addEventListener('mousewheel', function(e){
 	position.scale*= e.wheelDelta > 0 ? 1.1 : 0.88

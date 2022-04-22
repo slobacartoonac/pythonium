@@ -10,6 +10,7 @@ import { Renderer, RenderEngine } from 'my_lib/drawers/render.js'
 import Select from 'my_lib/select.js'
 import { Selectable } from 'my_lib/drawers/select_ecs.js'
 import { ShapeBox } from '../../../lib/shapes/box'
+import { ShapeText } from '../../../lib/shapes/text'
 
 function Input(draw){
 	const manager = new EntityManager()
@@ -42,8 +43,7 @@ function Input(draw){
 			}
 			return true
 		});
-		console.log(selected)
-		return selected.length
+		return selected[0]
 	}
 	
 	var all=[]
@@ -54,8 +54,13 @@ function Input(draw){
 		entity = manager.create()
 		manager.asign(new Transform([stabilex,stabiley]), entity)
 		manager.asign(new ShapeBox(50,40), entity)
-		manager.asign(new Renderer('#cc2222'), entity)
+		manager.asign(new Renderer('#555555'), entity)
 		manager.asign(new Selectable('#aaffbb'), entity)
+		all.push(entity)
+		entity = manager.create()
+		manager.asign(new Transform([stabilex+5,stabiley+20]), entity)
+		manager.asign(new ShapeText(20, "Select"), entity)
+		manager.asign(new Renderer('#cccccc'), entity)
 		all.push(entity)
 		stabilex+= 70;
 	}
