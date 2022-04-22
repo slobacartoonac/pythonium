@@ -1,13 +1,9 @@
 import { EntityManager } from 'my_lib/ecs.js'
 
-import { PhysicsEngine, Physics} from 'my_lib/physics/physics.js'
-
 import { Transform } from 'my_lib/physics/transform.js'
-import { ChainEngine, ChainLink } from 'my_lib/physics/chainEngine.js'
-import { ColisionEngine } from 'my_lib/physics/colisionEngine.js'
+
 import { Renderer, RenderEngine } from 'my_lib/drawers/render.js'
 
-import Select from 'my_lib/select.js'
 import { Selectable } from 'my_lib/drawers/select_ecs.js'
 import { ShapeBox } from '../../../lib/shapes/box'
 import { ShapeText } from '../../../lib/shapes/text'
@@ -53,7 +49,7 @@ function Input(draw){
 	for(var i = 0 ; i < 5; i ++){
 		entity = manager.create()
 		manager.asign(new Transform([stabilex,stabiley]), entity)
-		manager.asign(new ShapeBox(50,40), entity)
+		manager.asign(new ShapeBox(60,30), entity)
 		manager.asign(new Renderer('#555555'), entity)
 		manager.asign(new Selectable('#aaffbb'), entity)
 		all.push(entity)
@@ -62,7 +58,7 @@ function Input(draw){
 		manager.asign(new ShapeText(20, "Select"), entity)
 		manager.asign(new Renderer('#cccccc'), entity)
 		all.push(entity)
-		stabilex+= 70;
+		stabilex+= 65;
 	}
 	
 	this.work = function(position){
