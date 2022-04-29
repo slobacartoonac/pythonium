@@ -13,6 +13,13 @@ var draw=new Ploter(canvas)
 var scene=new Scene(draw);
 var input=new Input(draw);
 var selectionTool = {checked: false}
+var playPause = {checked: false}
+
+var buttonMap = {
+[input.addTogle("Selection").id]: selectionTool ,
+[input.addTogle("Play").id]: playPause
+};
+console.log(buttonMap);
 
 
 
@@ -61,9 +68,10 @@ touch.sub('stop',( props )=>{
 })
 
 touch.sub('click',(props)=>{
-	if(input.touchClick(props, input_position)){
-		console.log("touchClick")
-		selectionTool.checked = !selectionTool.checked 
+	const selected = input.touchClick(props, input_position);
+	if(selected){
+		buttonMap[selected.id.id].checked = !buttonMap[selected.id.id].checked
+		input.setState(selected.id, buttonMap[selected.id.id].checked)
 		return
 	}
 	scene.touchClick(props, position)
@@ -73,6 +81,7 @@ touch.sub('click',(props)=>{
 function work(){
 	draw.clear()
 	grid.draw(100,100,position)
+	scene.run = playPause.checked;
 	scene.work(position)
 	input.work(input_position);
 	fps.draw()
