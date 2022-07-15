@@ -7,52 +7,53 @@ console.log(__dirname);
 // Here you write different options and tell Webpack what to do
 module.exports = {
 
-		// Path to your entry point. From this file Webpack will begin his work
-		entry: './src/javascript/index.js',
+	// Path to your entry point. From this file Webpack will begin his work
+	entry: './src/javascript/index.js',
 
-		// Path and filename of your result bundle.
-		// Webpack will bundle all JavaScript into this file
-		output: {
-			path: path.resolve(__dirname, 'dist'),
-			filename: 'bundle.js'
-		},
+	// Path and filename of your result bundle.
+	// Webpack will bundle all JavaScript into this file
+	output: {
+		path: path.resolve(__dirname, 'dist'),
+		filename: 'bundle.js'
+	},
 
-		// Default mode for Webpack is production.
-		// Depending on mode Webpack will apply different things
-		// on final bundle. For now we don't need production's JavaScript 
-		// minifying and other thing so let's set mode to development
-		mode: "development",
-		module: {
-			rules: [
-				{
-					test: /\.js$/,
-					use: 'babel-loader',
-					exclude: [
-						/node_modules/
-					]
-				}
-			]
-		},
-		externals: {
-			test: /\.js?$/,
-			include: [
+	// Default mode for Webpack is production.
+	// Depending on mode Webpack will apply different things
+	// on final bundle. For now we don't need production's JavaScript 
+	// minifying and other thing so let's set mode to development
+	mode: "development",
+	module: {
+		rules: [
+			{
+				test: /\.js$/,
+				use: 'babel-loader',
+				exclude: [
+					/node_modules/
+				]
+			}
+		]
+	},
+	externals: {
+		test: /\.js?$/,
+		include: [
 			path.resolve(__dirname),
 			path.resolve(__dirname, '../lib')
-			],
-			exclude: /node_modules/,
-			loader: 'babel-loader'
+		],
+		exclude: /node_modules/,
+		loader: 'babel-loader'
+	},
+	resolve: {
+		alias: {
+			"../../../lib": path.resolve(__dirname, '../lib'),
+			"my_lib": path.resolve(__dirname, '../lib'),
 		},
-		resolve: {
-			alias: {
-			my_lib: path.resolve(__dirname, '../lib'),
-			},
+	},
+	devServer: {
+		allowedHosts: 'all',
+		static: {
+			directory: __dirname,
 		},
-		devServer: {
-			allowedHosts: 'all',
-			static: {
-				directory: __dirname,
-			},
-			compress: true,
-			port: 8080,
-		},
-	}
+		compress: true,
+		port: 8080,
+	},
+}
