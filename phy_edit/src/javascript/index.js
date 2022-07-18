@@ -25,6 +25,8 @@ var buttonMap = {
 };
 console.log(buttonMap);
 
+var input_position = { x: 0, y: 0, scale: 1 }
+var position = { x: 0, y: 0, scale: 1 }
 
 function adjustWindowSize() {
 	canvas.width = window.innerWidth - 10;
@@ -35,8 +37,8 @@ adjustWindowSize();
 
 window.addEventListener('resize', adjustWindowSize);
 
-var position = { x: 0, y: 0, scale: 1 }
-var input_position = { x: 0, y: 0, scale: 1 }
+
+
 var debugString = '0';
 
 
