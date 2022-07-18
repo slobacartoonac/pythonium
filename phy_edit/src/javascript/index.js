@@ -9,15 +9,19 @@ import { Input } from './input'
 
 const canvas = document.getElementById('phy_canvas')
 
-var draw=new Ploter(canvas)
-var scene=new Scene(draw);
-var input=new Input(draw);
-var selectionTool = {checked: false}
-var playPause = {checked: false}
+function chunkString(str) {
+	return str.split(/\r?\n/);
+}
+
+var draw = new Ploter(canvas)
+var scene = new Scene(draw);
+var input = new Input(draw);
+var selectionTool = { checked: false }
+var playPause = { checked: false }
 
 var buttonMap = {
-[input.addTogle("Selection").id]: selectionTool ,
-[input.addTogle("Play").id]: playPause
+	[input.addTogle("Selection").id]: selectionTool,
+	[input.addTogle("Play").id]: playPause
 };
 console.log(buttonMap);
 
@@ -25,51 +29,61 @@ console.log(buttonMap);
 
 window.addEventListener('resize', adjustWindowSize);
 
-var position={x: 0, y:0, scale:1}
-var input_position = {x: 0,y: 0, scale: 1}
+var position = { x: 0, y: 0, scale: 1 }
+var input_position = { x: 0, y: 0, scale: 1 }
+var debugString = '0';
 
-function adjustWindowSize(){
-	canvas.width  = window.innerWidth - 10;
+function adjustWindowSize() {
+	canvas.width = window.innerWidth - 10;
 	canvas.height = window.innerHeight - 10;
-	input_position = {x: canvas.width / 2,y: canvas.height / 2, scale: 1}
+	input_position = { x: canvas.width / 2, y: canvas.height / 2, scale: 1 }
 }
 adjustWindowSize();
 
-window.addEventListener('mousewheel', function(e){
-	position.scale*= e.wheelDelta > 0 ? 1.1 : 0.88
+window.addEventListener('mousewheel', function (e) {
+	position.scale *= e.wheelDelta > 0 ? 1.1 : 0.88
 })
-document.addEventListener('contextmenu', function(e) {
+document.addEventListener('contextmenu', function (e) {
 	e.preventDefault()
 });
-const fps=new FPSPloter(draw.context)
+const fps = new FPSPloter(draw.context)
 const grid = new GridPloter(draw.context)
 
 var touch = new Touch(canvas, 100)
-touch.sub('force', (props)=>{
+touch.sub('force', (props) => {
 	var {
 		delta,
+		deltaZoom,
+		isPrimary
 	} = props
-	if(!selectionTool.checked){
-		position = {...position, x: position.x - delta.x / position.scale,
-			y: position.y - delta.y / position.scale}
+
+	if (deltaZoom != 1) {
+		position.scale *= deltaZoom
+	}
+
+	if (!selectionTool.checked || !isPrimary) {
+		position = {
+			...position, x: position.x - delta.x / position.scale,
+			y: position.y - delta.y / position.scale
+		}
 		return
 	} else {
 		scene.touchForce(props, position)
 	}
 })
 
-touch.sub('stop',( props )=>{
+touch.sub('stop', (props) => {
 	var {
 		click,
 	} = props
-	if(selectionTool.checked && !click){
+	if (selectionTool.checked && !click) {
 		scene.touchStop(props, position);
 	}
 })
 
-touch.sub('click',(props)=>{
+touch.sub('click', (props) => {
 	const selected = input.touchClick(props, input_position);
-	if(selected){
+	if (selected) {
 		buttonMap[selected.id.id].checked = !buttonMap[selected.id.id].checked
 		input.setState(selected.id, buttonMap[selected.id.id].checked)
 		return
@@ -78,13 +92,19 @@ touch.sub('click',(props)=>{
 })
 
 
-function work(){
+function work() {
 	draw.clear()
-	grid.draw(100,100,position)
+	grid.draw(100, 100, position)
 	scene.run = playPause.checked;
 	scene.work(position)
 	input.work(input_position);
 	fps.draw()
-	setTimeout(work,0)
+	let debug = chunkString(debugString)
+	let y = 200;
+	for (let i in debug) {
+		draw.context.fillText(debug[i], 50, y += 30);
+	}
+
+	setTimeout(work, 0)
 }
 work()
