@@ -9,7 +9,8 @@
     "build": "webpack",
     "watch": " http-server & nodemon --exec npm run build --watch ./src --watch ../lib",
     "start": "webpack serve",
-    "lint": "eslint"
+    "lint": "eslint",
+    "dev": "npm run watch"
   },
   "author": "Slobodan Zikvoivc (slobacartoonac@gmail.com)",
   "license": "ISC",

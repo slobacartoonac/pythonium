@@ -14,7 +14,6 @@ function Input(draw) {
 	const points = new RenderEngine(draw.context, manager)
 
 	this.touchClick = function ({ x, y }, position) {
-		const { scale } = position
 		var point = draw.screenToWorld(position, [x, y])
 		console.log(point)
 		const pointsSelectable = manager.getEnities(Selectable).map(
@@ -42,7 +41,7 @@ function Input(draw) {
 		let entity = manager.create()
 		manager.asign(new Transform([stabilex, stabiley]), entity)
 		manager.asign(new ShapeBox(sizeText + 10, 30), entity)
-		manager.asign(new Renderer('#555555'), entity)
+		manager.asign(new Renderer(), entity)
 		manager.asign(new Selectable('#aaffbb'), entity)
 		all.push(entity)
 		let entityText = manager.create()
