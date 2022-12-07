@@ -1,8 +1,8 @@
-import Touch from 'my_lib/touch.js'
+import Touch from '../../../lib/fe/touch.js'
 
-import Ploter from 'my_lib/drawers/ploter.js'
-import FPSPloter from 'my_lib/drawers/drawFPS.js'
-import GridPloter from 'my_lib/drawers/drawGrid.js'
+import Ploter from '../../../lib/ecs/drawers/ploter.js'
+import FPSPloter from '../../../lib/ecs/drawers/drawFPS.js'
+import GridPloter from '../../../lib/ecs/drawers/drawGrid.js'
 
 import { Scene } from './scene'
 import { Input } from './input'

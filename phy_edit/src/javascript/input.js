@@ -1,10 +1,10 @@
-import { EntityManager } from '../../../lib/ecs.js'
+import { EntityManager } from '../../../lib/ecs'
 
-import { Transform } from '../../../lib/physics/transform.js'
+import { Transform } from '../../../lib/ecs/physics/transform.js'
 
-import { Renderer, RenderEngine } from '../../../lib/drawers/render.js'
+import { Renderer, RenderEngine } from '../../../lib/ecs/drawers/render.js'
 
-import { Selectable } from '../../../lib/drawers/select_ecs.js'
+import { Selectable } from '../../../lib/ecs/drawers/select_ecs.js'
 import { ShapeBox } from '../../../lib/shapes/box'
 import { ShapeText } from '../../../lib/shapes/text'
 import { pointInBox } from '../../../lib/math/box'
