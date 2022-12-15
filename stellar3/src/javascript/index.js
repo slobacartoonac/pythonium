@@ -1,19 +1,19 @@
 import { Gravity } from "gravity_calc";
-import Touch from 'my_lib/touch.js'
-import { EntityManager } from 'my_lib/ecs.js'
+import Touch from '../../../lib/fe/touch.js'
+import { EntityManager } from '../../../lib/ecs'
 
-import { PhysicsEngine, Physics } from 'my_lib/physics/physics.js'
-import { ShapeCircle } from 'my_lib/shapes/circle.js'
-import { PlasticColisionEngine } from 'my_lib/physics/plasticColisionEngine'
-import { GravityEngine } from 'my_lib/physics/gravityEngine'
-import { GravityColorEngine } from 'my_lib/drawers/gravityColorEngine.js'
+import { PhysicsEngine, Physics } from '../../../lib/ecs/physics/physics.js'
+import { ShapeCircle } from '../../../lib/shapes/circle.js'
+import { PlasticColisionEngine } from '../../../lib/ecs/physics/plasticColisionEngine'
+import { GravityEngine } from '../../../lib/ecs/physics/gravityEngine'
+import { GravityColorEngine } from '../../../lib/ecs/drawers/gravityColorEngine.js'
 
-import { Transform } from 'my_lib/physics/transform.js'
+import { Transform } from '../../../lib/ecs/physics/transform.js'
 
-import Ploter from 'my_lib/drawers/ploter.js'
-import FPSPloter from 'my_lib/drawers/drawFPS.js'
-import GridPloter from 'my_lib/drawers/drawGrid.js'
-import { Renderer, RenderEngine } from 'my_lib/drawers/render.js'
+import Ploter from '../../../lib/ecs/drawers/ploter.js'
+import FPSPloter from '../../../lib/ecs/drawers/drawFPS.js'
+import GridPloter from '../../../lib/ecs/drawers/drawGrid.js'
+import { Renderer, RenderEngine } from '../../../lib/ecs/drawers/render.js'
 
 const canvas = document.getElementById('phy_canvas')
 const toolokInput = document.getElementById('tolook_value')
