@@ -15,10 +15,12 @@ import FPSPloter from '../../../lib/ecs/drawers/drawFPS.js'
 import GridPloter from '../../../lib/ecs/drawers/drawGrid.js'
 import { Renderer, RenderEngine } from '../../../lib/ecs/drawers/render.js'
 import MassPloter from '../../../lib/ecs/drawers/drawMass.js'
+import GassPloter from '../../../lib/ecs/drawers/drawGass.js'
 
 const canvas = document.getElementById('phy_canvas')
 const toolokInput = document.getElementById('tolook_value')
 const drawMass = document.getElementById('draw_mass')
+const drawGass = document.getElementById('draw_gass')
 const drawGrid = document.getElementById('draw_grid')
 const drawFPS = document.getElementById('draw_fps')
 const fullSpeed = document.getElementById('full_speed')
@@ -40,6 +42,7 @@ const grid = new GridPloter(draw.context)
 var manager = new EntityManager()
 const points = new RenderEngine(draw.context, manager)
 const mass = new MassPloter(draw.context, manager)
+const gass = new GassPloter(draw.context, manager)
 const gravityEngine = new GravityEngine(manager)
 const colisionEngine = new PlasticColisionEngine(manager)
 const gravityColorEngine = new GravityColorEngine(manager)
@@ -110,6 +113,8 @@ function work() {
 	draw.clear()
 	if (drawMass.checked)
 		mass.draw(position)
+	if (drawGass.checked)
+		gass.draw(position)
 	if (drawGrid.checked)
 		grid.draw(100, 100, position)
 	points.draw(position)

@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config webpack.config.js",
+    "start": "webpack-dev-server",
     "watch": "nodemon --exec npm run build --watch ./src",
     "serve": "http-server",
     "lint": "eslint"
@@ -21,6 +22,7 @@
     "eslint": "^8.11.0",
     "nodemon": "^2.0.1",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
   }
 }
