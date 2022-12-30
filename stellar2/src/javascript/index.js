@@ -4,7 +4,7 @@ import Touch from '../../../lib/fe/touch'
 
 import { PhysicsEngine, Physics } from '../../../lib/ecs/physics/physics.js'
 import { ShapeCircle } from '../../../lib/shapes/circle.js'
-import { PlasticColisionEngine } from '../../../lib/ecs/physics/plasticColisionEngine'
+import { PlasticBody, PlasticColisionEngine } from '../../../lib/ecs/physics/plasticColisionEngine'
 import { GravityEngine } from '../../../lib/ecs/physics/gravityEngine'
 import { GravityColorEngine } from '../../../lib/ecs/drawers/gravityColorEngine'
 
@@ -16,6 +16,11 @@ import GridPloter from '../../../lib/ecs/drawers/drawGrid.js'
 import { Renderer, RenderEngine } from '../../../lib/ecs/drawers/render.js'
 import MassPloter from '../../../lib/ecs/drawers/drawMass.js'
 import GassPloter from '../../../lib/ecs/drawers/drawGass.js'
+import { ChainEngine, ChainLink } from '../../../lib/ecs/physics/chainEngine.js'
+import { ShapeBox } from '../../../lib/shapes/box'
+
+
+import { Sprite } from '../../../lib/shapes/sprite'
 
 const canvas = document.getElementById('phy_canvas')
 const toolokInput = document.getElementById('tolook_value')
@@ -40,13 +45,19 @@ const fps = new FPSPloter(draw.context)
 const grid = new GridPloter(draw.context)
 
 var manager = new EntityManager()
+
 const points = new RenderEngine(draw.context, manager)
 const mass = new MassPloter(draw.context, manager)
 const gass = new GassPloter(draw.context, manager)
 const gravityEngine = new GravityEngine(manager)
 const colisionEngine = new PlasticColisionEngine(manager)
 const gravityColorEngine = new GravityColorEngine(manager)
-const physics = new PhysicsEngine(manager, [gravityEngine, colisionEngine, gravityColorEngine])
+const chainEngine = new ChainEngine(manager)
+const physics = new PhysicsEngine(manager, [gravityEngine,
+	colisionEngine,
+	gravityColorEngine,
+	chainEngine
+])
 var touch = new Touch(canvas, 100)
 touch.sub('force', ({ delta, deltaZoom }) => {
 	position = {
@@ -70,18 +81,47 @@ function createSnode(positions, speeds, radius) {
 	manager.asign(new Physics(speeds, calculateMass(radius), 0), entity)
 	manager.asign(new ShapeCircle(radius), entity)
 	manager.asign(new Renderer('#aaffbb'), entity)
+	manager.asign(new PlasticBody(), entity)
 	return entity
 }
 
+function createLinkNode(positions, prevEntity, im, distance) {
+	entity = manager.create()
+	manager.asign(new Transform(positions), entity)
+	manager.asign(new Physics([0, 5], 10, 0), entity)
+	manager.asign(new ShapeBox(120, 120), entity)
+	manager.asign(new Renderer(''), entity)
+	manager.asign(new Sprite(im), entity)
+	if (prevEntity) {
+		manager.asign(new ChainLink(prevEntity, distance), entity)
+		manager.asign(new ChainLink(entity, distance), prevEntity)
+	}
+	return entity
+}
+
+let im = new Image()
+im.src = 'planeother2.png'
+
 all.push(createSnode([0, 0], [0, 0], 65, all, 'Sun'))
+
+all.push(createLinkNode([502, -100], all[all.length - 1], im, 700))
+all.push(createLinkNode([504, -150], all[all.length - 1], im, 80))
+all.push(createLinkNode([505, -200], all[all.length - 1], im, 80))
+all.push(createLinkNode([508, -250], all[all.length - 1], im, 80))
+all.push(createLinkNode([509, -350], all[all.length - 1], im, 80))
+all.push(createLinkNode([512, -400], all[all.length - 1], im, 80))
+
 all.push(createSnode([255, 0], [0, 5], 3, all, 'Mercury'))
 all.push(createSnode([300, 0], [0, 5], 4, all, 'Venus'))
 all.push(createSnode([450, 0], [0, 4], 7, all, 'Earth'))
 all.push(createSnode([600, 0], [0, 4], 4, all, 'Mars'))
-all.push(createSnode([1400, 0], [0, 2.5], 25, all, 'Jupiter'))
+let yupiter = createSnode([1400, 0], [0, 2.5], 25, all, 'Jupiter')
+all.push(yupiter)
 all.push(createSnode([1440, 0], [0, 6], 2, all, 'Europa'))
 all.push(createSnode([1450, 0], [0, 6], 2, all, 'Europa'))
 all.push(createSnode([2800, 0], [0, 2.5], 5, all, 'Saturn'))
+
+
 const generateItem = (size) => {
 	var angle = Math.random() * 2 * Math.PI
 	var radius = 200 + Math.random() * 2000
