@@ -1,0 +1,24 @@
+import { ShapeBox } from '../../lib/shapes/box'
+//import { Sprite } from '../../lib/shapes/sprite'
+// function createLinkNode(positions, prevEntity, im, distance) {
+// 	entity = manager.create()
+// 	manager.asign(new Transform(positions), entity)
+// 	manager.asign(new Physics([0, 5], 10, 0), entity)
+// 	manager.asign(new ShapeBox(120, 120), entity)
+// 	manager.asign(new Renderer(''), entity)
+// 	manager.asign(new Sprite(im), entity)
+// 	if (prevEntity) {
+// 		manager.asign(new ChainLink(prevEntity, distance), entity)
+// 		manager.asign(new ChainLink(entity, distance), prevEntity)
+// 	}
+// 	return entity
+// }
+
+// let im = new Image()
+// im.src = 'planeother2.png'
+// all.push(createLinkNode([502, -100], all[all.length - 1], im, 700))
+// all.push(createLinkNode([504, -150], all[all.length - 1], im, 80))
+// all.push(createLinkNode([505, -200], all[all.length - 1], im, 80))
+// all.push(createLinkNode([508, -250], all[all.length - 1], im, 80))
+// all.push(createLinkNode([509, -350], all[all.length - 1], im, 80))
+// all.push(createLinkNode([512, -400], all[all.length - 1], im, 80))

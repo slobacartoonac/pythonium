@@ -1,30 +1,31 @@
 
-import { EntityManager } from '../../../lib/ecs'
-import Touch from '../../../lib/fe/touch'
+import { EntityManager } from '../../lib/ecs'
+import Touch from '../../lib/fe/touch'
 
-import { PhysicsEngine, Physics } from '../../../lib/ecs/physics/physics.js'
-import { ShapeCircle } from '../../../lib/shapes/circle.js'
-import { PlasticBody, PlasticColisionEngine } from '../../../lib/ecs/physics/plasticColisionEngine'
-import { GravityEngine } from '../../../lib/ecs/physics/gravityEngine'
-import { GravityColorEngine } from '../../../lib/ecs/drawers/gravityColorEngine'
+import { PhysicsEngine, Physics } from '../../lib/ecs/physics/physics.js'
+import { ShapeCircle } from '../../lib/shapes/circle.js'
+import { PlasticBody, PlasticColisionEngine } from '../../lib/ecs/physics/plasticColisionEngine'
+import { GravityEngine } from '../../lib/ecs/physics/gravityEngine'
+import { GravityColorEngine } from '../../lib/ecs/drawers/gravityColorEngine'
 
-import { Transform } from '../../../lib/ecs/physics/transform.js'
+import { Transform } from '../../lib/ecs/physics/transform.js'
 
-import Ploter from '../../../lib/ecs/drawers/ploter.js'
-import FPSPloter from '../../../lib/ecs/drawers/drawFPS.js'
-import GridPloter from '../../../lib/ecs/drawers/drawGrid.js'
-import { Renderer, RenderEngine } from '../../../lib/ecs/drawers/render.js'
-import MassPloter from '../../../lib/ecs/drawers/drawMass.js'
-import GassPloter from '../../../lib/ecs/drawers/drawGass.js'
-import { ChainEngine, ChainLink } from '../../../lib/ecs/physics/chainEngine.js'
-import { ShapeBox } from '../../../lib/shapes/box'
+import Ploter from '../../lib/ecs/drawers/ploter.js'
+import FPSPloter from '../../lib/ecs/drawers/drawFPS.js'
+import GridPloter from '../../lib/ecs/drawers/drawGrid.js'
+import { Renderer, RenderEngine } from '../../lib/ecs/drawers/render.js'
+import MassPloter from '../../lib/ecs/drawers/drawMass.js'
+import GalaxyPloter from '../../lib/ecs/drawers/drawGalaxy'
+import GassPloter from '../../lib/ecs/drawers/drawGass.js'
+import { ChainEngine, ChainLink } from '../../lib/ecs/physics/chainEngine.js'
 
+import { skyColors } from './colors'
 
-import { Sprite } from '../../../lib/shapes/sprite'
 
 const canvas = document.getElementById('phy_canvas')
 const toolokInput = document.getElementById('tolook_value')
 const drawMass = document.getElementById('draw_mass')
+const drawGalaxy = document.getElementById('draw_galaxy')
 const drawGass = document.getElementById('draw_gass')
 const drawGrid = document.getElementById('draw_grid')
 const drawFPS = document.getElementById('draw_fps')
@@ -48,6 +49,7 @@ var manager = new EntityManager()
 
 const points = new RenderEngine(draw.context, manager)
 const mass = new MassPloter(draw.context, manager)
+const galaxy = new GalaxyPloter(draw.context, manager, skyColors)
 const gass = new GassPloter(draw.context, manager)
 const gravityEngine = new GravityEngine(manager)
 const colisionEngine = new PlasticColisionEngine(manager)
@@ -85,31 +87,12 @@ function createSnode(positions, speeds, radius) {
 	return entity
 }
 
-function createLinkNode(positions, prevEntity, im, distance) {
-	entity = manager.create()
-	manager.asign(new Transform(positions), entity)
-	manager.asign(new Physics([0, 5], 10, 0), entity)
-	manager.asign(new ShapeBox(120, 120), entity)
-	manager.asign(new Renderer(''), entity)
-	manager.asign(new Sprite(im), entity)
-	if (prevEntity) {
-		manager.asign(new ChainLink(prevEntity, distance), entity)
-		manager.asign(new ChainLink(entity, distance), prevEntity)
-	}
-	return entity
-}
 
-let im = new Image()
-im.src = 'planeother2.png'
+
+
 
 all.push(createSnode([0, 0], [0, 0], 65, all, 'Sun'))
 
-all.push(createLinkNode([502, -100], all[all.length - 1], im, 700))
-all.push(createLinkNode([504, -150], all[all.length - 1], im, 80))
-all.push(createLinkNode([505, -200], all[all.length - 1], im, 80))
-all.push(createLinkNode([508, -250], all[all.length - 1], im, 80))
-all.push(createLinkNode([509, -350], all[all.length - 1], im, 80))
-all.push(createLinkNode([512, -400], all[all.length - 1], im, 80))
 
 all.push(createSnode([255, 0], [0, 5], 3, all, 'Mercury'))
 all.push(createSnode([300, 0], [0, 5], 4, all, 'Venus'))
@@ -155,6 +138,9 @@ function work() {
 		mass.draw(position)
 	if (drawGass.checked)
 		gass.draw(position)
+	if (drawGalaxy.checked) {
+		galaxy.draw(position)
+	}
 	if (drawGrid.checked)
 		grid.draw(100, 100, position)
 	points.draw(position)
