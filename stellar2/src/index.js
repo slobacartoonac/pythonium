@@ -30,6 +30,7 @@ const drawGass = document.getElementById('draw_gass')
 const drawGrid = document.getElementById('draw_grid')
 const drawFPS = document.getElementById('draw_fps')
 const fullSpeed = document.getElementById('full_speed')
+const drawPlanets = document.getElementById('draw_planets')
 
 var draw = new Ploter(canvas)
 
@@ -134,6 +135,9 @@ function work() {
 		position.y = toLookTransform.positions[1]
 	}
 	draw.clear()
+
+	if (drawGrid.checked)
+		grid.draw(100, 100, position)
 	if (drawMass.checked)
 		mass.draw(position)
 	if (drawGass.checked)
@@ -141,9 +145,8 @@ function work() {
 	if (drawGalaxy.checked) {
 		galaxy.draw(position)
 	}
-	if (drawGrid.checked)
-		grid.draw(100, 100, position)
-	points.draw(position)
+	if (drawPlanets.checked)
+		points.draw(position)
 	if (drawFPS.checked)
 		fps.draw()
 	physics.compute()
