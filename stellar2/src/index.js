@@ -92,14 +92,14 @@ function createSnode(positions, speeds, radius) {
 
 
 
-all.push(createSnode([0, 0], [0, 0], 65, all, 'Sun'))
+all.push(createSnode([0, 0], [0, 0], 55, all, 'Sun'))
 
 
 all.push(createSnode([255, 0], [0, 5], 3, all, 'Mercury'))
 all.push(createSnode([300, 0], [0, 5], 4, all, 'Venus'))
 all.push(createSnode([450, 0], [0, 4], 7, all, 'Earth'))
 all.push(createSnode([600, 0], [0, 4], 4, all, 'Mars'))
-let yupiter = createSnode([1400, 0], [0, 2.5], 25, all, 'Jupiter')
+let yupiter = createSnode([1400, 0], [0, 2.5], 35, all, 'Jupiter')
 all.push(yupiter)
 all.push(createSnode([1440, 0], [0, 6], 2, all, 'Europa'))
 all.push(createSnode([1450, 0], [0, 6], 2, all, 'Europa'))
@@ -120,9 +120,13 @@ const generateItem = (size) => {
 	all.push(el)
 }
 
+for (let i = 0; i < 1000; i++) generateItem(10)
+
 setInterval(() => {
 	all.length < 30 && generateItem()
 }, 200)
+
+
 
 
 
