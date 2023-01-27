@@ -32,6 +32,7 @@ const drawGrid = document.getElementById('draw_grid')
 const drawFPS = document.getElementById('draw_fps')
 const fullSpeed = document.getElementById('full_speed')
 const drawPlanets = document.getElementById('draw_planets')
+const maxPlanets = document.getElementById('max_planets')
 
 var draw = new Ploter(canvas)
 
@@ -124,11 +125,17 @@ const generateItem = (size) => {
 	all.push(el)
 }
 
-for (let i = 0; i < 1000; i++) generateItem(10)
+
 
 setInterval(() => {
-	all.length < 30 && generateItem()
-}, 200)
+	let max = parseInt(maxPlanets.value) || 100
+	if (all.length < max - 10) {
+		for (let i = 0; i < 10; i++) generateItem(1)
+	}
+	all.forEach((el, index) => (index > max) &&
+		manager.destroy(el)
+	)
+}, 50)
 
 
 
