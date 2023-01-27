@@ -23,4 +23,8 @@ module.exports = {
 		publicPath: '/build/',
 		clean: true,
 	},
+	experiments: {
+		asyncWebAssembly: true,
+		syncWebAssembly: true
+	}
 };

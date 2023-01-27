@@ -17,14 +17,15 @@ import { Renderer, RenderEngine } from '../../lib/ecs/drawers/render.js'
 import MassPloter from '../../lib/ecs/drawers/drawMass.js'
 import GalaxyPloter from '../../lib/ecs/drawers/drawGalaxy'
 import GassPloter from '../../lib/ecs/drawers/drawGass.js'
-import { ChainEngine, ChainLink } from '../../lib/ecs/physics/chainEngine.js'
-
+import { ChainEngine } from '../../lib/ecs/physics/chainEngine.js'
 import { skyColors } from './colors'
+import { MassRust } from './rustimpl'
 
 
 const canvas = document.getElementById('phy_canvas')
 const toolokInput = document.getElementById('tolook_value')
 const drawMass = document.getElementById('draw_mass')
+const drawMassRust = document.getElementById('draw_mass_rust')
 const drawGalaxy = document.getElementById('draw_galaxy')
 const drawGass = document.getElementById('draw_gass')
 const drawGrid = document.getElementById('draw_grid')
@@ -48,8 +49,11 @@ const grid = new GridPloter(draw.context)
 
 var manager = new EntityManager()
 
+
 const points = new RenderEngine(draw.context, manager)
 const mass = new MassPloter(draw.context, manager)
+const massRust = new MassRust(draw.context, manager)
+console.log(massRust)
 const galaxy = new GalaxyPloter(draw.context, manager, skyColors)
 const gass = new GassPloter(draw.context, manager)
 const gravityEngine = new GravityEngine(manager)
@@ -144,6 +148,8 @@ function work() {
 		grid.draw(100, 100, position)
 	if (drawMass.checked)
 		mass.draw(position)
+	if (drawMassRust.checked)
+		massRust.drawAll(position)
 	if (drawGass.checked)
 		gass.draw(position)
 	if (drawGalaxy.checked) {
