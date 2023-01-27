@@ -7,7 +7,6 @@ const path = require('path');
 module.exports = merge(common, {
     devtool: 'source-map',
     mode: 'development',
-    watch: true,
     watchOptions: {
         ignored: '**/node_modules',
     },

@@ -6,7 +6,7 @@ import { PhysicsEngine, Physics } from '../../lib/ecs/physics/physics.js'
 import { ShapeCircle } from '../../lib/shapes/circle.js'
 import { PlasticBody, PlasticColisionEngine } from '../../lib/ecs/physics/plasticColisionEngine'
 import { GravityEngine } from '../../lib/ecs/physics/gravityEngine'
-import { GravityColorEngine } from '../../lib/ecs/drawers/gravityColorEngine'
+import { GravityColorEngine } from './gravityColorEngine'
 
 import { Transform } from '../../lib/ecs/physics/transform.js'
 
@@ -54,7 +54,6 @@ var manager = new EntityManager()
 const points = new RenderEngine(draw.context, manager)
 const mass = new MassPloter(draw.context, manager)
 const massRust = new MassRust(draw.context, manager)
-console.log(massRust)
 const galaxy = new GalaxyPloter(draw.context, manager, skyColors)
 const gass = new GassPloter(draw.context, manager)
 const gravityEngine = new GravityEngine(manager)
@@ -79,7 +78,8 @@ var entity = null
 var all = []
 
 function calculateMass(radius) {
-	var massVolume = 0.1
+	var massVolume = 0.2 + Math.tanh((radius - 50) * 0.2) * 0.05 + Math.tanh((20 - radius) * 0.2) * 0.1
+	console.log(radius, massVolume)
 	return Math.pow(radius, 3) * Math.PI * massVolume
 }
 
@@ -142,8 +142,8 @@ setInterval(() => {
 
 
 function work() {
-	var numb = parseInt(toolokInput.value)
-	if (!isNaN(numb)) {
+	var numb = parseInt(toolokInput.value) - 1
+	if (!isNaN(numb) && numb >= 0) {
 		var toLookEntity = all[numb % all.length]
 		var toLookTransform = manager.get(Transform, toLookEntity)[0]
 		position.x = toLookTransform.positions[0]
