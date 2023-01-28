@@ -8,6 +8,7 @@ module.exports = merge(common, {
     devtool: 'source-map',
     mode: 'development',
     watchOptions: {
+        poll: 1000,
         ignored: '**/node_modules',
     },
     devServer: {
