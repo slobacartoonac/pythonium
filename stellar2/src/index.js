@@ -79,7 +79,7 @@ var all = []
 
 function calculateMass(radius) {
 	var massVolume = 0.2 + Math.tanh((radius - 50) * 0.2) * 0.05 + Math.tanh((20 - radius) * 0.2) * 0.1
-	console.log(radius, massVolume)
+	console.log("ffdsdf")
 	return Math.pow(radius, 3) * Math.PI * massVolume
 }
 

@@ -1,9 +1,10 @@
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-var-requires */
+const { merge } = require('webpack-merge');
 const path = require('path');
 const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin')
 
-module.exports = {
+const common = {
 	entry: './src/index',
 	mode: 'production',
 	module: {
@@ -74,3 +75,15 @@ module.exports = {
 		}),
 	]
 };
+
+if (process.env.NODE_ENV === 'development') {
+	const dev = require('./webpack.dev.js');
+	console.log("Dev")
+	const res = merge(dev, common)
+	module.exports = res
+}
+else {
+	const prod = require('./webpack.prod.js');
+	console.log("Prod")
+	module.exports = merge(common, prod)
+}
