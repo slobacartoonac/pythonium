@@ -19,7 +19,7 @@ var position = new ScreenPosition(canvas, {
 	minScale: 0.15,
 	maxScale: 3
 })
-var scene = (new (Scene as any)(draw, input)) ;
+var scene = new Scene(draw, input) ;
 
 function adjustWindowSize() {
 	input.setResolution()
@@ -40,7 +40,6 @@ let program_text = document.getElementById('program_text')
 let debounced = debounce(scene.setProgram,200)
 program_text.addEventListener('input',(ev: Event)=>{
 	// @ts-ignore
-	
 	debounced(ev.target.value)
 })
 
@@ -87,9 +86,5 @@ function work() {
 	input.work();
 }
 
-function initGame(){
-	scene.initGame()
-}
-
-return {work, adjustWindowSize, initGame }
+return {work, adjustWindowSize }
 }

@@ -7,8 +7,7 @@ function resolveResult(timeLeft: number){
 	//alert(timeLeft)
 }
 
-let {work, adjustWindowSize, initGame} = createGame(canvas, resolveResult)
-ginit=initGame
+let {work, adjustWindowSize} = createGame(canvas, resolveResult)
 window.addEventListener('resize',()=>{
 	canvas.width = window.innerWidth - 10;
 	canvas.height = window.innerHeight - 10;

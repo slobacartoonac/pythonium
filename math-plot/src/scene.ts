@@ -5,26 +5,34 @@ import { ScreenPosition } from '../../lib/fe/screen-position'
 import { Input } from './input'
 import { execute } from 'type-math'
 
-function Scene(draw: Ploter, input: Input) {
-	const fPloter = new FunctionPloter(draw.context)
-	this.setProgram = (program: string) => {
+class Scene {
+	draw: Ploter
+	input: Input
+	fPloter: FunctionPloter
+	func: (x: number) => number = (x: number) => x;
+
+	constructor(draw: Ploter, input: Input){
+		this.draw = draw;
+		this.input = input;
+		this.fPloter = new FunctionPloter(draw.context)
+	}
+
+	setProgram = (program: string) => {
 		this.func = (x: number)=>{
 			let {res, err} = execute(program, {x})
 			if(err){
-				input.setBaloonText(err)
+				this.input.setBaloonText(err)
 				console.log(err)
 			}
 			else {
-				input.setBaloonText("")
+				this.input.setBaloonText("")
 			}
 			return res
 		}
 	}
-
-	this.func = (x: number) => x;
 	
-	this.work = function (position: ScreenPosition) {
-		fPloter.draw(position, this.func, "black")
+	work = function (position: ScreenPosition) {
+		this.fPloter.draw(position, this.func, "black")
 	}
 }
 
