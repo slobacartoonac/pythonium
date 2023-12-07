@@ -101,7 +101,7 @@ class Scene {
 			this.text = entity
 			let pos = new Transform([Math.random()*50-25, Math.random()*50-25])
 			this.manager.asign(pos, entity)
-			this.manager.asign(new Physics([0,0], 10, 0.01), entity)
+			this.manager.asign(new Physics([0,0], 20, 0.05), entity)
 			this.manager.asign(new ShapeCircle(2), entity)
 			this.manager.asign(new Renderer('#ffaabb'), entity)
 			let entity1 = this.manager.create()
