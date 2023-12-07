@@ -11,10 +11,17 @@ import * as wordDiffCalculator from '../../lib/search/word-difference-calculator
 
 import { Input } from './input'
 import { execute } from 'type-math'
-import { wordsList } from './wordsList'
+import { wordsList as wFull } from './wordsList'
 import { Transform } from '../../lib/ecs/physics/transform'
 import { ShapeCircle } from '../../lib/shapes/circle'
 import { ShapeText } from '../../lib/shapes/text'
+
+const wordsList =  wFull.filter((item,
+        index) => wFull.indexOf(item) === index);
+
+const muFunc = (dist)=>{
+	return (dist-1)
+}
 
 class Scene {
 
@@ -64,8 +71,8 @@ class Scene {
 				const prevEntity = this.entities[w2]
 				let stabileDistance = 300 * wordDiffCalculator.computeWordDifference(word, wordsList[w2])
 				if(stabileDistance > 0.00001){
-					this.manager.asign(new ChainLink(prevEntity, stabileDistance), entity)
-					this.manager.asign(new ChainLink(entity, stabileDistance), prevEntity)
+					this.manager.asign(new ChainLink(prevEntity, stabileDistance, muFunc), entity)
+					this.manager.asign(new ChainLink(entity, stabileDistance, muFunc), prevEntity)
 				}
 			}
 		}
@@ -104,7 +111,7 @@ class Scene {
 			if(stabileDistance < 0.00001){
 				stabileDistance = 10
 			}
-			this.manager.asign(new ChainLink(prevEntity, stabileDistance), this.text)
+			this.manager.asign(new ChainLink(prevEntity, stabileDistance, muFunc), this.text)
 		}
 	}
 	
