@@ -19,8 +19,20 @@ import { ShapeText } from '../../lib/shapes/text'
 const wordsList =  wFull.filter((item,
         index) => wFull.indexOf(item) === index);
 
+function shuffleArray(array) {
+	for (var i = array.length - 1; i > 0; i--) {
+		var j = Math.floor(Math.random() * (i + 1));
+		var temp = array[i];
+		array[i] = array[j];
+		array[j] = temp;
+	}
+}
+
+shuffleArray(wordsList)
+shuffleArray(wordsList)
+
 const muFunc = (dist)=>{
-	return (dist-1)
+	return (dist-1)*Math.pow(dist,-1)
 }
 
 class Scene {
@@ -50,12 +62,12 @@ class Scene {
 	addWord(){
 		let w1 = this.entities.length
 		let word = wordsList[w1]
-		if(!word) return
+		if(w1 > 500) return
 		let entity = this.manager.create()
 		this.entities.push(entity)
 		let pos = new Transform([Math.random()*50-25, Math.random()*50-25])
 		this.manager.asign(pos, entity)
-		this.manager.asign(new Physics([0,0], 20, 0.2), entity)
+		this.manager.asign(new Physics([0,0], 20, 0.05), entity)
 		this.manager.asign(new ShapeCircle(2), entity)
 		this.manager.asign(new Renderer('#aaffbb'), entity)
 		let entity1 = this.manager.create()
@@ -89,7 +101,7 @@ class Scene {
 			this.text = entity
 			let pos = new Transform([Math.random()*50-25, Math.random()*50-25])
 			this.manager.asign(pos, entity)
-			this.manager.asign(new Physics([0,0], 20, 0.2), entity)
+			this.manager.asign(new Physics([0,0], 10, 0.01), entity)
 			this.manager.asign(new ShapeCircle(2), entity)
 			this.manager.asign(new Renderer('#ffaabb'), entity)
 			let entity1 = this.manager.create()
@@ -109,7 +121,7 @@ class Scene {
 			const prevEntity = this.entities[w2]
 			let stabileDistance = 300 * wordDiffCalculator.computeWordDifference(text, wordsList[w2])
 			if(stabileDistance < 0.00001){
-				stabileDistance = 10
+				stabileDistance = 1
 			}
 			this.manager.asign(new ChainLink(prevEntity, stabileDistance, muFunc), this.text)
 		}
