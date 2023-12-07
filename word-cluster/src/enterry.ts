@@ -36,6 +36,13 @@ document.addEventListener('contextmenu', function (e) {
 	e.preventDefault()
 });
 
+let test_text = document.getElementById('test_text')
+let debounced = debounce(scene.setTestText,200)
+test_text.addEventListener('input',(ev: Event)=>{
+	// @ts-ignore
+	debounced(ev.target.value)
+})
+
 // const fps = new FPSPloter(draw.context)
 const grid = new GridPloter(draw.context, { axisCords: true, devide: 4, showAxis: true })
 
