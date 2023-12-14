@@ -92,7 +92,7 @@ class Scene {
 	addWord(){
 		let w1 = this.words
 		this.words ++
-		let language = new LangPoint(languages[w1])
+		let language = languages[w1] && new LangPoint(languages[w1])
 		if(!language || w1 > 500) return
 		let entity = this.manager.create()
 		this.entities.push(entity)
