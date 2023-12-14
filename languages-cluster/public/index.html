@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        input[type="text"] {
+            all: unset;
+            width: calc(100% - 48px);
+            outline: none;
+
+        }
+
+        span {
+            -webkit-user-select: none;
+            /* Safari */
+            -ms-user-select: none;
+            /* IE 10 and IE 11 */
+            user-select: none;
+            /* Standard syntax */
+        }
+
+        .posFunction {
+            width: 100%;
+            max-width: 300px;
+            top: 20px;
+            left: 0;
+            right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            position: absolute;
+            margin: auto;
+            height: 50px;
+            padding: 12px 20px;
+            box-sizing: border-box;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            background-color: #f8f8f8;
+            resize: none;
+            font-size: 22px;
+        }
+    </style>
+</head>
+
+<body style="background: white; color:black; padding: 0px; margin: 0px">
+    <canvas id="phy_canvas"></canvas>
+    <script src="build/main.bundle.js"></script>
+</body>
+
+</html>
