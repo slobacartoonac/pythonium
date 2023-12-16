@@ -15,6 +15,7 @@ import { ShapeCircle } from '../../lib/shapes/circle'
 import { ShapeText } from '../../lib/shapes/text'
 import { Language, languages } from './languages'
 import { programmers } from './programmers'
+import { ShapeNoScale } from '../../lib/shapes/noScale'
 
 class LangPoint implements Language {
 	name: string
@@ -119,7 +120,8 @@ class Scene {
 		  ];
 		  const entity0 = this.manager.create();
 		  this.manager.asign(pos, entity0);
-		  this.manager.asign(new ShapeText(12, language.name), entity0);
+		  this.manager.asign(new ShapeText(18, language.name), entity0);
+		  this.manager.asign(new ShapeNoScale(), entity0);
 		  this.manager.asign(new Renderer('#000044', null, 1), entity0);
 
 		  for (const property of properties) {
@@ -134,7 +136,7 @@ class Scene {
 			for(let prevEntity of this.entities){
 				if(prevEntity == entity) continue;
 				const prevLangPoint = this.manager.get(LangPoint, prevEntity)[0]
-				let stabileDistance = 30+100 * computeWordDifference(language, prevLangPoint)
+				let stabileDistance = 100+90 * computeWordDifference(language, prevLangPoint)
 				if(stabileDistance > 0.00001){
 					this.manager.asign(new ChainLink(prevEntity, stabileDistance, muFunc), entity)
 					this.manager.asign(new ChainLink(entity, stabileDistance, muFunc), prevEntity)
@@ -169,15 +171,27 @@ class Scene {
 			'parameter_strictness',
 			'prevention_of_runtime_bugs'
 		  ];
+
 		  const entity0 = this.manager.create();
 		  this.manager.asign(pos, entity0);
-		  this.manager.asign(new ShapeText(12, programer.name), entity0);
+		  this.manager.asign(new ShapeText(18, programer.name), entity0);
+		  this.manager.asign(new ShapeNoScale(), entity0);
 		  this.manager.asign(new Renderer('#006600', null, 1), entity0);
+
+		  for (const property of properties) {
+			const entity1 = this.manager.create();
+			const propertyName = property.replace(/_/g, ' ');
+			this.manager.asign(pos, entity1);
+			this.manager.asign(new Transform([0, properties.indexOf(property) * 12+14]), entity1);
+			this.manager.asign(new ShapeText(10, `${propertyName}: ${programer[property]}`), entity1);
+			this.manager.asign(new Renderer('#333333', null, 1), entity1);
+		  }
+
 		if(w1 != 0){
 			for(let prevEntity of this.entities){
 				if(prevEntity == entity) continue;
 				const prevLangPoint = this.manager.get(LangPoint,prevEntity)[0]
-				let stabileDistance = 30+100 * computeWordDifference(programer, prevLangPoint)
+				let stabileDistance = 100+90 * computeWordDifference(programer, prevLangPoint)
 				if(stabileDistance > 0.00001){
 					this.manager.asign(new ChainLink(prevEntity, stabileDistance, muFunc), entity)
 					this.manager.asign(new ChainLink(entity, stabileDistance, muFunc), prevEntity)
