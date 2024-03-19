@@ -18,6 +18,7 @@ import MassPloter from '../../lib/ecs/drawers/drawMass.js'
 import GalaxyPloter from '../../lib/ecs/drawers/drawGalaxy'
 import GassPloter from '../../lib/ecs/drawers/drawGass.js'
 import { ChainEngine } from '../../lib/ecs/physics/chainEngine.js'
+import { takeScreenshot } from '../../lib/fe/recorder'
 import { skyColors } from './colors'
 import { MassRust } from './rustimpl'
 
@@ -33,6 +34,13 @@ const drawFPS = document.getElementById('draw_fps')
 const fullSpeed = document.getElementById('full_speed')
 const drawPlanets = document.getElementById('draw_planets')
 const maxPlanets = document.getElementById('max_planets')
+const screenShotButton = document.getElementById('screen_shot')
+console.log(screenShotButton)
+
+screenShotButton.onclick = () => {
+	console.log('screenshot')
+	takeScreenshot('png', true)
+}
 
 var draw = new Ploter(canvas)
 
