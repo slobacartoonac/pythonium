@@ -1,0 +1,36 @@
+{
+  "name": "Why projects are late",
+  "version": "1.0.0",
+  "description": "\"Plotting functions\"",
+  "main": "./src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config webpack.prod.js",
+    "watch": "webpack --watch --config webpack.dev.js",
+    "start": "webpack serve --config webpack.dev.js"
+  },
+  "keywords": [
+    "plotter",
+    "math",
+    "functions",
+    "comiler",
+    "ast",
+    "tree"
+  ],
+  "author": "Slobodan Zivkovic (slobacartoonac@gmail.com)",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/uuid": "^8.3.4",
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
+    "@typescript-eslint/parser": "^5.27.1",
+    "debounce": "^1.2.1",
+    "eslint": "^8.17.0",
+    "ts-loader": "^9.3.0",
+    "type-math": "github:slobacartoonac/math-compile",
+    "typescript": "^4.7.3",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.9.2",
+    "webpack-merge": "^5.8.0"
+  }
+}
