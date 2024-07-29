@@ -23,7 +23,7 @@ function trail(x) {
 	return Math.tanh(x*6-4)+Math.tanh(-x*3+4.3)*(1-trailProb) +Math.tanh(-x+4.3)*trailProb
 }
 
-let DEVIDEER = 13
+let DEVIDEER = 14
 
 
 class Scene {
@@ -62,59 +62,41 @@ class Scene {
 	}
 
 	init(){
-		for(let i = 0; i < 50; i++){
-			this.addPoint(i/10, -trail(i/10))
+		let oneTask = {}
+		for(let i = 0; i < 200; i++){
+			oneTask[i] =  trail(i/10)
 		}
-		let twoTasks = {}
-		for(let i = 0; i < 50; i++){
-			for(let j = 0; j < 50; j++){
-				let x1 = i
-				let y1 = trail(x1/10)
-				let x2 = j
-				let y2 = trail(x2/10)
-				let finalx = x1+x2
-				let finaly = y1*y2/DEVIDEER
-				twoTasks[finalx] = twoTasks[finalx] ? twoTasks[finalx]+finaly: finaly
-			}
+		let twoTasks = this.combineTwoTasks(oneTask, oneTask)
+		let threeTasks = this.combineTwoTasks(oneTask, twoTasks)
+		let nTasks = oneTask
+		for(let i = 0; i < 6; i++){
+			nTasks = this.combineTwoTasks(oneTask, nTasks)
 		}
-		for(let i = 0; i < 100; i++){
-			this.addPoint(i/10, -twoTasks[i]||0, '#00ff00')
-		}
-
-		let threeTasks = {}
-		for(let i = 0; i < 50; i++){
-			for(let j = 0; j < 100; j++){
-				let x1 = i
-				let y1 = trail(x1/10)
-				let x2 = j
-				let y2 = twoTasks[x2]
-				let finalx = x1+x2
-				let finaly = y1*y2/DEVIDEER
-				threeTasks[finalx] = threeTasks[finalx] ? threeTasks[finalx]+finaly: finaly
-			}
-		}
-		let fourTasks = {}
-		for(let i = 0; i < 50; i++){
-			for(let j = 0; j < 100; j++){
-				let x1 = i
-				let y1 = trail(x1/10)
-				let x2 = j
-				let y2 = threeTasks[x2]
-				let finalx = x1+x2
-				let finaly = y1*y2/DEVIDEER
-				fourTasks[finalx] = fourTasks[finalx] ? fourTasks[finalx]+finaly: finaly
-			}
-		}
-		for(let i = 0; i < 100; i++){
+		for(let i = 0; i < 200; i++){
+			this.addPoint(i/10, -oneTask[i]||0)
 			this.addPoint(i/10, -twoTasks[i]||0, '#00ff00')
 			this.addPoint(i/10, -threeTasks[i]||0, '#0000ff')
-			this.addPoint(i/10, -fourTasks[i]||0, '#00ffff')
+			this.addPoint(i/10, -nTasks[i]||0, '#00ffff')
 		}
+	}
+
+	combineTwoTasks(task1, task2) {
+		let twoTasks = {}
+		for(let i = 0; i < 100; i++){
+			for(let j = 0; j < 200; j++){
+				let y1 = task1[i]
+				let y2 = task2[j]
+				let finalx = i+j
+				let finaly = y1*y2/DEVIDEER
+				twoTasks[finalx] = twoTasks[finalx] ? twoTasks[finalx] + finaly: finaly
+			}
+		}
+		return twoTasks
 	}
 
 	
 	work = function (position: ScreenPosition) {
-		this.fPloter.draw(position, (x)=>trail(x), "black")
+		//this.fPloter.draw(position, (x)=>trail(x), "black")
 		this.points.draw(position)
 	}
 }
