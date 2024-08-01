@@ -17,17 +17,10 @@ function gauss(x, mu = 0, sigma = 1) {
     return factor * Math.exp(exponent);
 }
 
-let trailProb = .05
-
-function trail(x) {
-	return Math.tanh(x*6-4)+Math.tanh(-x*3+4.3)*(1-trailProb) +Math.tanh(-x+4.3)*trailProb
-}
-
 let DEVIDEER = 14
 
 
 class Scene {
-
 	draw: Ploter
 	input: Input
 	func: (x: number) => number = (x: number) => x;
@@ -38,6 +31,8 @@ class Scene {
 	entities: Entity[]
 	text?: Entity
 	fPloter: FunctionPloter
+	trailProb: number = .05
+    taskNumber: number = 6
 
 	constructor(draw: Ploter, input: Input){
 		this.draw = draw;
@@ -49,7 +44,9 @@ class Scene {
 		this.fPloter = new FunctionPloter(draw.context)
 		this.init()
 	}
-	setTestText = (text: string) => {
+
+	trail(x) {
+		return Math.tanh(x*6-4)+Math.tanh(-x*3+4.3)*(1-this.trailProb) +Math.tanh(-x+4.3)*this.trailProb
 	}
 	
 	addPoint(x, y, color = '#ff0000'){
@@ -62,14 +59,17 @@ class Scene {
 	}
 
 	init(){
+		this.entities.forEach(e=>this.manager.destroy(e))
+		this.entities = []
+
 		let oneTask = {}
 		for(let i = 0; i < 200; i++){
-			oneTask[i] =  trail(i/10)
+			oneTask[i] =  this.trail(i/10)
 		}
 		let twoTasks = this.combineTwoTasks(oneTask, oneTask)
 		let threeTasks = this.combineTwoTasks(oneTask, twoTasks)
 		let nTasks = oneTask
-		for(let i = 0; i < 6; i++){
+		for(let i = 0; i < this.taskNumber; i++){
 			nTasks = this.combineTwoTasks(oneTask, nTasks)
 		}
 		for(let i = 0; i < 200; i++){
@@ -92,6 +92,21 @@ class Scene {
 			}
 		}
 		return twoTasks
+	}
+
+	setTask(setTask: any) {
+		let setTaskParsed = parseFloat(setTask)
+		if(isFinite(setTaskParsed)){
+			this.taskNumber = setTaskParsed
+			this.init()
+		}
+	}
+	setTail(setTail: any) {
+		let setTailParsed = parseFloat(setTail)
+		if(isFinite(setTailParsed)){
+			this.trailProb = setTailParsed/100
+			this.init()
+		}
 	}
 
 	

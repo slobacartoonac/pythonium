@@ -21,6 +21,20 @@ var position = new ScreenPosition(canvas, {
 })
 var scene = new Scene(draw, input) ;
 
+let slider1 = document.getElementById('slider1')
+let debouncedTail = debounce(scene.setTail.bind(scene),200)
+slider1.addEventListener('input',(ev: Event)=>{
+	// @ts-ignore
+	debouncedTail(ev.target.value)
+})
+
+let slider2 = document.getElementById('slider2')
+let debouncedTask = debounce(scene.setTask.bind(scene),200)
+slider2.addEventListener('input',(ev: Event)=>{
+	// @ts-ignore
+	debouncedTask(ev.target.value)
+})
+
 function adjustWindowSize() {
 	input.setResolution()
 }
