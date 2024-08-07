@@ -39,50 +39,10 @@
             resize: none;
             font-size: 22px;
         }
-        .floating-window {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            width: 300px;
-            padding: 10px;
-            background-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        .slider-container {
-            margin-bottom: 15px;
-        }
-
-        .slider-label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .slider {
-            width: 100%;
-        }
     </style>
 </head>
 
 <body style="background: white; color:black; padding: 0px; margin: 0px">
-    <div class="floating-window">
-        <div class="slider-container">
-            <label class="slider-label" for="slider1">tail</label>
-            <input type="range" id="slider1" class="slider" min="0" max="20" value="10" oninput="this.nextElementSibling.value = this.value">
-            <output></output>
-        </div>
-        <div class="slider-container">
-            <label class="slider-label" for="slider2">task NO</label>
-            <input type="range" id="slider2" class="slider" min="0" max="20" value="6" oninput="this.nextElementSibling.value = this.value">
-            <output></output>
-        </div>
-        <!-- <div class="slider-container">
-            <label class="slider-label" for="slider3">Slider 3</label>
-            <input type="range" id="slider3" class="slider" min="0" max="100" value="50">
-        </div> -->
-    </div>
     <canvas id="phy_canvas"></canvas>
     <script src="build/main.bundle.js"></script>
 </body>

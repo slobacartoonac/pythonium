@@ -7,6 +7,8 @@ import { ScreenPosition } from '../../lib/fe/screen-position'
 import { Input } from './input'
 import debounce from 'debounce'
 
+import { SliderComponent } from '../../lib/fe/sliderComponent.js'
+
 
 export function createGame(canvas: HTMLCanvasElement, gameResult: (timeLeft: number)=>void){
 var draw = new Ploter(canvas)
@@ -19,21 +21,25 @@ var position = new ScreenPosition(canvas, {
 	minScale: 0.15,
 	maxScale: 3
 })
+position.loadFromLocalStorage('mylastview')
 var scene = new Scene(draw, input) ;
 
-let slider1 = document.getElementById('slider1')
 let debouncedTail = debounce(scene.setTail.bind(scene),200)
-slider1.addEventListener('input',(ev: Event)=>{
-	// @ts-ignore
-	debouncedTail(ev.target.value)
-})
 
-let slider2 = document.getElementById('slider2')
+
+new SliderComponent({
+	label: 'Tail %',
+	defaultValue: '6',
+	max: '50',
+	oninput: debouncedTail})
+
 let debouncedTask = debounce(scene.setTask.bind(scene),200)
-slider2.addEventListener('input',(ev: Event)=>{
-	// @ts-ignore
-	debouncedTask(ev.target.value)
-})
+
+new SliderComponent({
+	label: 'Tasks NO',
+	defaultValue: '6',
+	max: '10',
+	oninput: debouncedTask})
 
 function adjustWindowSize() {
 	input.setResolution()

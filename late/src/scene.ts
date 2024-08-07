@@ -5,20 +5,19 @@ import Ploter from '../../lib/ecs/drawers/ploter'
 import { RenderEngine, Renderer } from '../../lib/ecs/drawers/render'
 import { ScreenPosition } from '../../lib/fe/screen-position'
 
-
-
 import { Input } from './input'
 import { Transform } from '../../lib/ecs/physics/transform'
 import { ShapeCircle } from '../../lib/shapes/circle'
+import { ShapeText } from '../../lib/shapes/text'
+import { ShapeNoScale } from '../../lib/shapes/noScale'
 
-function gauss(x, mu = 0, sigma = 1) {
-    const factor = 1 / (sigma * Math.sqrt(2 * Math.PI));
-    const exponent = -((x - mu) ** 2) / (2 * sigma ** 2);
-    return factor * Math.exp(exponent);
+const DEVIDEER = 14
+const AREA_UNDER_CURVE = 20
+const STEPS = 10
+
+function tail(x, tailProb) {
+	return Math.tanh(x*6-4)+Math.tanh(-x*3+4.3)*(1-tailProb) +Math.tanh(-x+4.3)*tailProb
 }
-
-let DEVIDEER = 14
-
 
 class Scene {
 	draw: Ploter
@@ -33,6 +32,7 @@ class Scene {
 	fPloter: FunctionPloter
 	trailProb: number = .05
     taskNumber: number = 6
+	perfectTask = {}
 
 	constructor(draw: Ploter, input: Input){
 		this.draw = draw;
@@ -42,13 +42,14 @@ class Scene {
 		this.points=new RenderEngine(draw.context, this.manager)
 		this.entities = [] as Entity[]
 		this.fPloter = new FunctionPloter(draw.context)
+		this.perfectTask = {}
+		for(let i = 0; i < 200; i++){
+			this.perfectTask[i] =  tail(i/STEPS, 0)
+		}
+		this.normalizeTask(this.perfectTask)
 		this.init()
 	}
 
-	trail(x) {
-		return Math.tanh(x*6-4)+Math.tanh(-x*3+4.3)*(1-this.trailProb) +Math.tanh(-x+4.3)*this.trailProb
-	}
-	
 	addPoint(x, y, color = '#ff0000'){
 		let entity = this.manager.create()
 		this.entities.push(entity)
@@ -56,6 +57,7 @@ class Scene {
 		this.manager.asign(pos, entity)
 		this.manager.asign(new ShapeCircle(4), entity)
 		this.manager.asign(new Renderer(color,{color: 'gray', width: 1}), entity)
+		return entity
 	}
 
 	init(){
@@ -64,19 +66,55 @@ class Scene {
 
 		let oneTask = {}
 		for(let i = 0; i < 200; i++){
-			oneTask[i] =  this.trail(i/10)
+			oneTask[i] =  tail(i/STEPS, this.trailProb)
 		}
+
+		this.normalizeTask(oneTask)
+
+		this.calcFail(oneTask,this.perfectTask,'#ff0000', 0)
+
+
+		let colors = ['#ff0000','#00ff00','#0000ff','#00ffff']
+		let colorsGray = ['#aa4444','#44aa44','#4444aa','#44aaaa']
 		let twoTasks = this.combineTwoTasks(oneTask, oneTask)
 		let threeTasks = this.combineTwoTasks(oneTask, twoTasks)
 		let nTasks = oneTask
+		let niceTask = this.perfectTask
 		for(let i = 0; i < this.taskNumber; i++){
 			nTasks = this.combineTwoTasks(oneTask, nTasks)
+			niceTask = this.combineTwoTasks(this.perfectTask, niceTask)
+			this.calcFail(nTasks,niceTask, colors[i+1]||'#00ffff', i+1)
 		}
+
+		this.plotCumulative(this.perfectTask,'#aa4444')
+		this.plotChange(this.perfectTask,'#aa4444')
+		this.plotCumulative(niceTask, colorsGray[this.taskNumber]||'#44aaaa')
+		this.plotChange(niceTask, colorsGray[this.taskNumber]||'#44aaaa')
+
+		this.plotChange(oneTask)
+		this.plotChange(twoTasks, '#00ff00')
+		this.plotChange(threeTasks, '#0000ff')
+		this.plotChange(nTasks, '#00ffff')
+
+
+		this.plotCumulative(oneTask)
+		this.plotCumulative(twoTasks, '#00ff00')
+		this.plotCumulative(threeTasks, '#0000ff')
+		this.plotCumulative(nTasks, '#00ffff')
+		
+	}
+
+	plotChange(task, color?){
 		for(let i = 0; i < 200; i++){
-			this.addPoint(i/10, -oneTask[i]||0)
-			this.addPoint(i/10, -twoTasks[i]||0, '#00ff00')
-			this.addPoint(i/10, -threeTasks[i]||0, '#0000ff')
-			this.addPoint(i/10, -nTasks[i]||0, '#00ffff')
+			this.addPoint(i/STEPS,-task[i]||0, color)
+		}
+	}
+
+	plotCumulative(task, color?){
+		let sum = 0
+		for(let i = 0; i < 200; i++){
+			sum +=  (task[i] || 0) / AREA_UNDER_CURVE * 2
+			this.addPoint(i/STEPS,- 3 -sum, color)
 		}
 	}
 
@@ -91,7 +129,39 @@ class Scene {
 				twoTasks[finalx] = twoTasks[finalx] ? twoTasks[finalx] + finaly: finaly
 			}
 		}
+
+		this.normalizeTask(twoTasks)
+
 		return twoTasks
+	}
+
+	normalizeTask(task){
+		let sum = 0
+		for(let i = 0; i < 200; i++){
+			sum += task[i] 
+		}
+		sum /= AREA_UNDER_CURVE
+		for(let i = 0; i < 200; i++){
+			task[i] /= sum  
+		}
+	}
+
+	calcFail(task, niceTask, color, index){
+		let raz = 0
+		let nominalSucces = 0
+		let success = 0
+		for(let i = 0; i < 200; i++){
+			nominalSucces += niceTask[i]
+			success += task[i]
+			let razCond = nominalSucces - success
+			if(razCond > 0.001){
+				raz += razCond
+			}
+		}
+
+		let ent = this.addPoint(1+index,-2.7, color)
+		this.manager.asign(new ShapeNoScale(), ent)
+		this.manager.asign(new ShapeText(15, '%'+(raz*2 / AREA_UNDER_CURVE).toFixed(2)), ent)
 	}
 
 	setTask(setTask: any) {
@@ -108,10 +178,10 @@ class Scene {
 			this.init()
 		}
 	}
-
 	
-	work = function (position: ScreenPosition) {
-		//this.fPloter.draw(position, (x)=>trail(x), "black")
+	work(position: ScreenPosition) {
+		//this.fPloter.draw(position, (x)=>(-3+tail(x, this.trailProb)), "black")
+		//this.fPloter.draw(position, (x)=>(-2.05+tail(x-this.taskNumber, 0)), "green")
 		this.points.draw(position)
 	}
 }
