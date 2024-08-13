@@ -7,7 +7,7 @@ import { ScreenPosition } from '../../lib/fe/screen-position'
 import { Input } from './input'
 import debounce from 'debounce'
 
-import { SliderComponent } from '../../lib/fe/sliderComponent.js'
+import { CheckboxComponent, SliderComponent } from '../../lib/fe/sliderComponent.js'
 
 
 export function createGame(canvas: HTMLCanvasElement, gameResult: (timeLeft: number)=>void){
@@ -40,6 +40,14 @@ new SliderComponent({
 	defaultValue: '6',
 	max: '10',
 	oninput: debouncedTask})
+
+
+let debouncedCheckbox = debounce(scene.setNormCurves.bind(scene),200)
+
+
+new CheckboxComponent({
+	label: 'Normalize Curves',
+	onchange: debouncedCheckbox})
 
 function adjustWindowSize() {
 	input.setResolution()

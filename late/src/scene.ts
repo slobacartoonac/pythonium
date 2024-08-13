@@ -33,6 +33,7 @@ class Scene {
 	trailProb: number = .05
     taskNumber: number = 6
 	perfectTask = {}
+	normCurves: false
 
 	constructor(draw: Ploter, input: Input){
 		this.draw = draw;
@@ -105,8 +106,9 @@ class Scene {
 	}
 
 	plotChange(task, color?){
+		let scale = this.normCurves ? -2/Math.max(...Object.values(task) as any) : -1 
 		for(let i = 0; i < 200; i++){
-			this.addPoint(i/STEPS,-task[i]||0, color)
+			this.addPoint(i/STEPS,scale * (task[i]||0), color)
 		}
 	}
 
@@ -144,6 +146,11 @@ class Scene {
 		for(let i = 0; i < 200; i++){
 			task[i] /= sum  
 		}
+	}
+
+	setNormCurves(value){
+		this.normCurves = value
+		this.init()
 	}
 
 	calcFail(task, niceTask, color, index){
