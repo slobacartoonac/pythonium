@@ -1,4 +1,4 @@
-import Touch from '../../../lib/fe/touch.js'
+import Touch from '../../../lib/fe/touch'
 
 import Ploter from '../../../lib/ecs/drawers/ploter.js'
 import FPSPloter from '../../../lib/ecs/drawers/drawFPS.js'
