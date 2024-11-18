@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Journal Transcriber
+Exec=/usr/bin/python3 -m main
+Icon=audio-input-microphone
+Terminal=false
