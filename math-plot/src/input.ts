@@ -21,10 +21,10 @@ class Input {
 	ploter: Ploter
 	manager: EntityManager
 	render: RenderEngine
-	all: Array<Entity>
+	all: Array<Entity | any>
 	stabilex: number
 	stabiley: number
-	inputs: {[key:string]: Entity}
+	inputs: {[key:string]: Entity | any}
 	input_position: ScreenPosition
 	timer: number
 	baloonText: string
