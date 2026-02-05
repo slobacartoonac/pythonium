@@ -31,7 +31,7 @@ class Scene {
 
 	setProgram = (program: string) => {
 		this.funcArr = []
-		let programs = program.split(/[|;\n]+/).map(p => p.trim()).filter(p => p.length > 0)
+		let programs = program.split(/[\\;\n]+/).map(p => p.trim()).filter(p => p.length > 0)
 		programs.forEach(p => this.addFunction(p))
 	}
 	addFunction = (program: string) => {
